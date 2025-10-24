@@ -1,0 +1,20 @@
+#include <string>
+
+namespace cdm {
+	class HandleScannerConfig
+	{
+	public:
+		totalProductionVolume : int :default = 0;
+		totalDefectiveVolume : int :default = 0;
+		productionYield : double :default = 0.0;
+		isDebug : bool :default = false;
+		isDefect : bool :default = false;
+		isSaveImg : bool :default = false;
+		isshibiekuang : bool :default = true;
+		iswenzi : bool :default = true;
+		tingjigeshu : int :default = 0;
+		isqiangguang : bool :default = false;
+		iszhongguang : bool :default = false;
+		isruoguang : bool :default = false;
+	};
+}

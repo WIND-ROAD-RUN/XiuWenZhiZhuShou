@@ -1,0 +1,35 @@
+#include <string>
+
+namespace cdm {
+	class ScoreConfig
+	{
+	public:
+		tangShang : bool :default = false;
+		tangShangScore : double :default = 0;
+		tangShangArea : double :default = 0;
+
+		queLiao : bool :default = false;
+		queLiaoScore : double :default = 0;
+		queLiaoArea : double :default = 0;
+
+		yiWu : bool :default = false;
+		yiWuScore : double :default = 0;
+		yiWuArea : double :default = 0;
+
+		zangWu : bool :default = false;
+		zangWuScore : double :default = 0;
+		zangWuArea : double :default = 0;
+
+		zhanlian : bool :default = false;
+		zhanlianScore : double :default = 0;
+		zhanlianArea : double :default = 0;
+
+		feiliao : bool :default = false;
+		feiliaoScore : double :default = 0;
+		feiliaoArea : double :default = 0;
+
+		mojucuowu : bool :default = false;
+		mojucuowuScore : double :default = 0;
+		mojucuowuArea : double :default = 0;
+	};
+}

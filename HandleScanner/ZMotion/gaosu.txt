@@ -1,0 +1,14 @@
+	
+
+FOR I=0 TO 500 STEP 2
+	
+	
+	OP(0,ON)
+	DELAY(100)
+     OP(0,OFF)
+	DELAY(100)
+	
+	
+	
+	
+NEXT

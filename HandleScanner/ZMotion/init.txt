@@ -1,0 +1,46 @@
+
+
+
+DPOS=0
+MPOS=0
+
+
+LOCAL i1
+LOCAL i2
+LOCAL nowLocation
+MODBUS_IEEE(4)=100
+MODBUS_IEEE(2)=ABS( DPOS AXIS(0))
+MODBUS_IEEE(6)=ABS( DPOS AXIS(0))
+
+WHILE	1
+nowLocation=ABS( DPOS AXIS(0))
+
+   '33一相机
+	
+	'1相机
+	IF ABS(nowLocation-MODBUS_IEEE(2))>MODBUS_IEEE(4) THEN'屏蔽区
+		MODBUS_IEEE(2)=nowLocation
+		MODBUS_IEEE(6)=nowLocation
+		BASE(1)
+		MOVE_OP2 (33,ON,20) 
+		MOVE_OP2 (32,ON,20) 
+
+		i1=i1+1
+		PRINT MODBUS_IEEE(2)
+	
+		
+	ENDIF
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+WEND

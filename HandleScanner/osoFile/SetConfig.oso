@@ -1,0 +1,100 @@
+#include <string>
+
+namespace cdm {
+	class SetConfig
+	{
+	public:
+		zhongyangxianwei1 : int :default = 0;
+		zhongyangxianwei2 : int :default = 0;
+
+		qiyongerxiangji : bool :default = false;
+		qiyongyundongkongzhiqi : bool :default = false;
+		yundongkongzhiqichonglian : bool :default = false;
+
+		yanshixiachawai1 : double :default = 0;
+		boliaoshijianwai1 : double :default = 0;
+
+		yanshixiachawai2 : double :default = 0;
+		boliaoshijianwai2 : double :default = 0;
+
+		yanshixiachanei1 : double :default = 0;
+		boliaoshijiannei1 : double :default = 0;
+
+		yanshixiachanei2 : double :default = 0;
+		boliaoshijiannei2 : double :default = 0;
+
+		xiangjichufachangdu : double :default = 0;
+		meizhuanmaichongshu : double :default = 0;
+		shedingzhouchang : double :default = 0;
+
+		waicetifeijuli1 : double :default = 0;
+		neicetifeijuli1 : double :default = 0;
+		tifeirongyufangdou1 : double :default = 0;
+		waicetifeijuli2 : double :default = 0;
+		neicetifeijuli2 : double :default = 0;
+		tifeirongyufangdou2 : double :default = 0;
+
+		tuxiangshunshizhenxuanzhuancishu1 : int :default = 0;
+		tuxiangshunshizhenxuanzhuancishu2 : int :default = 0;
+
+		xunzhaoquexiansuoshubashoudepianchazhi : double :default = 0;
+
+		shangXianWei1 : double :default = 0;
+		xiaXianWei1 : double :default = 0;
+		zuoXianWei1 : double :default = 0;
+		youXianWei1 : double :default = 0;
+		xiangSuDangLiang1 : double :default = 0;
+		shangXianWei2 : double :default = 0;
+		xiaXianWei2 : double :default = 0;
+		zuoXianWei2 : double :default = 0;
+		youXianWei2 : double :default = 0;
+		xiangSuDangLiang2 : double :default = 0;
+
+		qiangbaoguang : double :default = 0;
+		qiangzengyi : double :default = 0;
+		zhongbaoguang : double :default = 0;
+		zhongzengyi : double :default = 0;
+		ruobaoguang : double :default = 0;
+		ruozengyi : double :default = 0;
+
+		takeWork1Pictures : bool :default = false;
+		takeWork2Pictures : bool :default = false;
+		saveNGImg : bool :default = false;
+		saveMaskImg : bool :default = false;
+		saveOKImg : bool :default = false;
+
+		isSaveJPEG : bool :default = false;
+		isSaveBMP : bool :default = false;
+		isSavePNG : bool :default = false;
+		saveImgQuality : int :default = 66;
+
+		DOpaizhao1 : int :default = 0;
+		DOpaizhao2 : int :default = 0;
+		DOguangyuan : int :default = 0;
+		DObaojing : int :default = 0;
+		DOtingji : int :default = 0;
+		DOxiachaqigangwai1 : int :default = 0;
+		DOxiachaqigangnei1 : int :default = 0;
+		DOxiachaqigangwai2 : int :default = 0;
+		DOxiachaqigangnei2 : int :default = 0;
+		DOboliaoqigangwai1 : int :default = 0;
+		DOboliaoqigangnei1 : int :default = 0;
+		DOboliaoqigangwai2 : int :default = 0;
+		DOboliaoqigangnei2 : int :default = 0;
+
+		debugMode : bool :default = false;
+
+		istangshang : bool :default = false;
+		isqueliao : bool :default = false;
+		isyiwu : bool :default = false;
+		iszangwu : bool :default = false;
+		isextra2 : bool :default = false;
+		isextra3 : bool :default = false;
+		isextra4 : bool :default = false;
+		isextra5 : bool :default = false;
+		isextra6 : bool :default = false;
+		isextra7 : bool :default = false;
+		isextra8 : bool :default = false;
+		isextra9 : bool :default = false;
+	};
+}
