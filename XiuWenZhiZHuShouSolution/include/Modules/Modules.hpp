@@ -15,6 +15,7 @@
 #include "rqw_RunEnvCheck.hpp"
 #include "TestModule.hpp"
 #include "WarningModule.hpp"
+#include"CommunicationModule.hpp"
 
 //TODO:补充报警信息
 
@@ -61,6 +62,7 @@ public:
 	ImgSaveModule imgSaveModule;
 	MotionControllerModule motionControllerModule;
 	WarningModule warningModule;
+	CommunicationModule communicationModule;
 
 
 #ifdef BUILD_WITHOUT_HARDWARE

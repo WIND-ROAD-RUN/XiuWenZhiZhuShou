@@ -6,6 +6,7 @@
 #include "rqw_ImageSaveEngine.h"
 #include "ImageProcessorModule.hpp"
 #include "RuntimeInfoModule.hpp"
+
 #ifdef BUILD_WITHOUT_HARDWARE
 #include "TestImgGenerated.hpp"
 #endif

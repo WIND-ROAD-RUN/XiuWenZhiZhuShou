@@ -22,6 +22,8 @@ bool Modules::build()
 	// 读取配置
 	auto configManagerBuild = configManagerModule.build();
 
+	auto communciationModule = communicationModule.build();
+
 	// 构建相机
 	auto cameraBuild = cameraModule.build();
 
@@ -75,12 +77,14 @@ void Modules::destroy()
 	imgSaveModule.destroy();
 	motionControllerModule.destroy();
 	warningModule.destroy();
+	communicationModule.destroy();
 }
 
 void Modules::start()
 {
 	uiModule.start();
 	configManagerModule.start();
+	communicationModule.start();
 	motionControllerModule.start();
 	runtimeInfoModule.start();
 	warningModule.start();
@@ -111,6 +115,7 @@ void Modules::stop()
 	motionControllerModule.stop();
 	configManagerModule.stop();
 	uiModule.stop();
+	communicationModule.stop();
 }
 
 void Modules::connect()
