@@ -133,6 +133,7 @@ void Modules::connect()
 #pragma region connect UIModule and imgProModule
 	QObject::connect(imgProModule.imageProcessingModule1.get(), &ImageProcessingModuleHandleScanner::imageNGReady, uiModule._handleScanner, &HandleScanner::onCameraNGDisplay);
 	QObject::connect(imgProModule.imageProcessingModule2.get(), &ImageProcessingModuleHandleScanner::imageNGReady, uiModule._handleScanner, &HandleScanner::onCameraNGDisplay);
+	QObject::connect(imgProModule.imageProcessingModule1.get(), &ImageProcessingModuleHandleScanner::updateMainWindowShowTXT, uiModule._handleScanner, &HandleScanner::appendTcpLog);
 
 	QObject::connect(uiModule._handleScanner, &HandleScanner::shibiekuangChanged, &imgProModule, &ImgProModule::onUpdateImgProContext);
 	QObject::connect(uiModule._handleScanner, &HandleScanner::wenziChanged, &imgProModule, &ImgProModule::onUpdateImgProContext);
@@ -171,11 +172,6 @@ void Modules::connect()
 #pragma region connect UIModule and RuntimeInfoModule
 	QObject::connect(runtimeInfoModule.detachUtiltyThread.get(), &DetachUtiltyThread::updateStatisticalInfo,
 		uiModule._handleScanner, &HandleScanner::onUpdateStatisticalInfoUI, Qt::QueuedConnection);
-#pragma endregion
-
-#pragma region connect MotionControllerModule and RuntimeInfoModule
-	QObject::connect(runtimeInfoModule.detachUtiltyThread.get(), &DetachUtiltyThread::produceCountReachingTheSetValue,
-		&motionControllerModule, &MotionControllerModule::getStopSignal, Qt::QueuedConnection);
 #pragma endregion
 
 #pragma region connect UIModule and CommunicationModule

@@ -92,9 +92,9 @@ void ImageProcessorHandleScanner::run_debug(MatInfo& frame)
 		message += QString("center_y:%1 ").arg(body.center_y);
 		message += QString("angle:%1 ").arg(body.angle);
 		Modules::getInstance().communicationModule.broadcastMessage(message);
-	}
 
-	
+		emit updateMainWindowShowTXT(message);
+	}
 
 	emit imageNGReady(QPixmap::fromImage(maskImg), frame.index, defectResult.isBad);
 }
@@ -256,6 +256,8 @@ void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
 		message += QString("center_y:%1 ").arg(body.center_y);
 		message += QString("angle:%1 ").arg(body.angle);
 		Modules::getInstance().communicationModule.broadcastMessage(message);
+
+		emit updateMainWindowShowTXT(message);
 	}
 }
 
@@ -374,6 +376,7 @@ void ImageProcessingModuleHandleScanner::BuildModule()
 		processor->imageProcessingModuleIndex = index;
 		processor->buildDetModelEngine(modelEnginePath);
 		connect(processor, &ImageProcessorHandleScanner::imageNGReady, this, &ImageProcessingModuleHandleScanner::imageNGReady, Qt::QueuedConnection);
+		connect(processor, &ImageProcessorHandleScanner::updateMainWindowShowTXT, this, &ImageProcessingModuleHandleScanner::updateMainWindowShowTXT, Qt::QueuedConnection);
 		_processors.push_back(processor);
 		processor->start();
 	}

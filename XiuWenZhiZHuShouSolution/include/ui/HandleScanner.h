@@ -50,6 +50,8 @@ public slots:
 	void onCameraNGDisplay(QPixmap image, size_t index, bool isbad);
 
 	void lb_title_clicked();
+
+	void appendTcpLog(const QString text);
 private slots:
 	void pbtn_exit_clicked();
 	void pbtn_set_clicked();
@@ -65,7 +67,6 @@ private slots:
 	void rbtn_strongLight_checked(bool isChecked);
 	void rbtn_mediumLight_checked(bool isChecked);
 	void rbtn_weakLight_checked(bool isChecked);
-	void btn_tingjigeshu_clicked();
 	void pbtn_resetProduct_clicked();
 
 signals:

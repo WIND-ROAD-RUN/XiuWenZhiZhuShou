@@ -52,7 +52,6 @@ void CameraAndCardStateThreadHandleScanner::check_cameraState()
 	check_cameraState1();
 	if (_dlgProductSet.qiyongerxiangji)
 	{
-		check_cameraState2();
 	}
 }
 
@@ -82,36 +81,6 @@ void CameraAndCardStateThreadHandleScanner::check_cameraState1()
 		emit startMonitor(1);
 		emit updateCameraLabelState(1, false);
 		isUpdateState = false;
-	}
-}
-
-void CameraAndCardStateThreadHandleScanner::check_cameraState2()
-{
-	auto& camera2 = Modules::getInstance().cameraModule.camera2;
-
-	static bool isUpdateSate = false;
-
-	if (runtimeCounts != 1) {
-		return;
-	}
-
-	if (camera2) {
-		if (camera2->getConnectState()) {
-			if (!isUpdateSate) {
-				emit updateCameraLabelState(2, true);
-				isUpdateSate = true;
-			}
-		}
-		else {
-			emit destroyCamera(2);
-			emit updateCameraLabelState(2, false);
-		}
-	}
-	else {
-		emit buildCamera(2);
-		emit startMonitor(2);
-		emit updateCameraLabelState(2, false);
-		isUpdateSate = false;
 	}
 }
 

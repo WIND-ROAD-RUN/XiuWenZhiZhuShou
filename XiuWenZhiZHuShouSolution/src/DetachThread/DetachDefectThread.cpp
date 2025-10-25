@@ -62,8 +62,6 @@ void DetachDefectThreadHandleScanner::processQueue1(std::unique_ptr<rw::dsl::Thr
 		queue->tryPopTop(info);
 		lastDefectLoc1 = info.centerYLoc;
 		std::cout << "----emit defect signal1 ,loc:-----" << static_cast<int>(lastDefectLoc1) << std::endl;
-		// ++wasteCount when defect
-		++Modules::getInstance().runtimeInfoModule.statisticalInfo.wasteCount;
 		if (info.isInner)
 		{
 			zmotion->setIOOut(ControlLines::DOxiachaqigangnei1, true);
@@ -125,10 +123,8 @@ void DetachDefectThreadHandleScanner::processQueue2(std::unique_ptr<rw::dsl::Thr
 	if (diffValue >= 0) {
 		queue->tryPopTop(info);
 		lastDefectLoc2 = info.centerYLoc;
-		// ++wasteCount when defect
 		
 		std::cout << "----emit defect signal2 ,loc:-----" << static_cast<int>(lastDefectLoc2) << std::endl;
-		++Modules::getInstance().runtimeInfoModule.statisticalInfo.wasteCount;
 		if (info.isInner)
 		{
 			zmotion->setIOOut(ControlLines::DOxiachaqigangnei2, true);

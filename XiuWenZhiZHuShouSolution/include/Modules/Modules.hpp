@@ -17,8 +17,6 @@
 #include "WarningModule.hpp"
 #include"CommunicationModule.hpp"
 
-//TODO:补充报警信息
-
 class Modules
 	:public IModule<bool>
 {

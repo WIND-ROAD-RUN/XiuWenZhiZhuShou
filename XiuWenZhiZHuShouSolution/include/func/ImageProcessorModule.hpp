@@ -54,6 +54,7 @@ private:
 signals:
 	void imageNGReady(QPixmap image, size_t index, bool isbad);
 
+	void updateMainWindowShowTXT(const QString message);
 private:
 	std::unique_ptr<rw::imgPro::ImageProcess> _imgProcess;
 public:
@@ -106,6 +107,7 @@ public slots:
 signals:
 	void imageNGReady(QPixmap image, size_t index, bool isbad);
 
+	void updateMainWindowShowTXT(const QString message);
 public:
 	std::vector<ImageProcessorHandleScanner*> getProcessors() const {
 		return _processors;

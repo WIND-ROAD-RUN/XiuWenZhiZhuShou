@@ -32,7 +32,6 @@ void DetachUtiltyThread::run()
 	while (running) {
 		QThread::sleep(1);
 		CalculateRealtimeInformation(s);
-		CalculateIsProduceCountReachingTheSetValue(s);
 		++s;
 		if (s == 300)
 		{
@@ -43,35 +42,5 @@ void DetachUtiltyThread::run()
 
 void DetachUtiltyThread::CalculateRealtimeInformation(size_t s)
 {
-	auto& runtimeModule = Modules::getInstance().runtimeInfoModule;
-	auto& statisticalInfo = runtimeModule.statisticalInfo;
-
-	// 计算生产良率
-	auto totalCount = statisticalInfo.produceCount.load();
-	auto wasteCount = statisticalInfo.wasteCount.load();
-	if (totalCount != 0)
-	{
-		if (totalCount > wasteCount)
-		{
-			statisticalInfo.productionYield = (static_cast<double>(totalCount - wasteCount) / totalCount) * 100;
-		}
-	}
-
 	emit updateStatisticalInfo();
-}
-
-void DetachUtiltyThread::CalculateIsProduceCountReachingTheSetValue(size_t s)
-{
-	auto& nowProduceCount = Modules::getInstance().runtimeInfoModule.statisticalInfo.produceCount;
-	auto& tingjigeshu = Modules::getInstance().configManagerModule.handleScannerConfig.tingjigeshu;
-
-	if (nowProduceCount >= lastProduceCount)
-	{
-		if (nowProduceCount >= tingjigeshu && lastProduceCount < tingjigeshu)
-		{
-			emit produceCountReachingTheSetValue();
-		}
-	}
-
-	lastProduceCount = nowProduceCount.load();
 }

@@ -20,14 +20,11 @@ namespace cdm {
 
     public:
         int totalProductionVolume{ 0 };
-        int totalDefectiveVolume{ 0 };
-        double productionYield{ 0.0 };
         bool isDebug{ false };
         bool isDefect{ false };
         bool isSaveImg{ false };
         bool isshibiekuang{ true };
         bool iswenzi{ true };
-        int tingjigeshu{ 0 };
         bool isqiangguang{ false };
         bool iszhongguang{ false };
         bool isruoguang{ false };
@@ -45,16 +42,6 @@ namespace cdm {
             throw std::runtime_error("$variable$totalProductionVolume is not found");
         }
         totalProductionVolume = totalProductionVolumeItem->getValueAsInt();
-        auto totalDefectiveVolumeItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$totalDefectiveVolume$"));
-        if (!totalDefectiveVolumeItem) {
-            throw std::runtime_error("$variable$totalDefectiveVolume is not found");
-        }
-        totalDefectiveVolume = totalDefectiveVolumeItem->getValueAsInt();
-        auto productionYieldItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$productionYield$"));
-        if (!productionYieldItem) {
-            throw std::runtime_error("$variable$productionYield is not found");
-        }
-        productionYield = productionYieldItem->getValueAsDouble();
         auto isDebugItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$isDebug$"));
         if (!isDebugItem) {
             throw std::runtime_error("$variable$isDebug is not found");
@@ -80,11 +67,6 @@ namespace cdm {
             throw std::runtime_error("$variable$iswenzi is not found");
         }
         iswenzi = iswenziItem->getValueAsBool();
-        auto tingjigeshuItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$tingjigeshu$"));
-        if (!tingjigeshuItem) {
-            throw std::runtime_error("$variable$tingjigeshu is not found");
-        }
-        tingjigeshu = tingjigeshuItem->getValueAsInt();
         auto isqiangguangItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$isqiangguang$"));
         if (!isqiangguangItem) {
             throw std::runtime_error("$variable$isqiangguang is not found");
@@ -105,14 +87,11 @@ namespace cdm {
     inline HandleScannerConfig::HandleScannerConfig(const HandleScannerConfig& obj)
     {
         totalProductionVolume = obj.totalProductionVolume;
-        totalDefectiveVolume = obj.totalDefectiveVolume;
-        productionYield = obj.productionYield;
         isDebug = obj.isDebug;
         isDefect = obj.isDefect;
         isSaveImg = obj.isSaveImg;
         isshibiekuang = obj.isshibiekuang;
         iswenzi = obj.iswenzi;
-        tingjigeshu = obj.tingjigeshu;
         isqiangguang = obj.isqiangguang;
         iszhongguang = obj.iszhongguang;
         isruoguang = obj.isruoguang;
@@ -122,14 +101,11 @@ namespace cdm {
     {
         if (this != &obj) {
             totalProductionVolume = obj.totalProductionVolume;
-            totalDefectiveVolume = obj.totalDefectiveVolume;
-            productionYield = obj.productionYield;
             isDebug = obj.isDebug;
             isDefect = obj.isDefect;
             isSaveImg = obj.isSaveImg;
             isshibiekuang = obj.isshibiekuang;
             iswenzi = obj.iswenzi;
-            tingjigeshu = obj.tingjigeshu;
             isqiangguang = obj.isqiangguang;
             iszhongguang = obj.iszhongguang;
             isruoguang = obj.isruoguang;
@@ -145,14 +121,6 @@ namespace cdm {
         totalProductionVolumeItem->setName("$variable$totalProductionVolume$");
         totalProductionVolumeItem->setValueFromInt(totalProductionVolume);
         assembly.addItem(totalProductionVolumeItem);
-        auto totalDefectiveVolumeItem = std::make_shared<rw::oso::ObjectStoreItem>();
-        totalDefectiveVolumeItem->setName("$variable$totalDefectiveVolume$");
-        totalDefectiveVolumeItem->setValueFromInt(totalDefectiveVolume);
-        assembly.addItem(totalDefectiveVolumeItem);
-        auto productionYieldItem = std::make_shared<rw::oso::ObjectStoreItem>();
-        productionYieldItem->setName("$variable$productionYield$");
-        productionYieldItem->setValueFromDouble(productionYield);
-        assembly.addItem(productionYieldItem);
         auto isDebugItem = std::make_shared<rw::oso::ObjectStoreItem>();
         isDebugItem->setName("$variable$isDebug$");
         isDebugItem->setValueFromBool(isDebug);
@@ -173,10 +141,6 @@ namespace cdm {
         iswenziItem->setName("$variable$iswenzi$");
         iswenziItem->setValueFromBool(iswenzi);
         assembly.addItem(iswenziItem);
-        auto tingjigeshuItem = std::make_shared<rw::oso::ObjectStoreItem>();
-        tingjigeshuItem->setName("$variable$tingjigeshu$");
-        tingjigeshuItem->setValueFromInt(tingjigeshu);
-        assembly.addItem(tingjigeshuItem);
         auto isqiangguangItem = std::make_shared<rw::oso::ObjectStoreItem>();
         isqiangguangItem->setName("$variable$isqiangguang$");
         isqiangguangItem->setValueFromBool(isqiangguang);
@@ -194,7 +158,7 @@ namespace cdm {
 
     inline bool HandleScannerConfig::operator==(const HandleScannerConfig& obj) const
     {
-        return totalProductionVolume == obj.totalProductionVolume && totalDefectiveVolume == obj.totalDefectiveVolume && productionYield == obj.productionYield && isDebug == obj.isDebug && isDefect == obj.isDefect && isSaveImg == obj.isSaveImg && isshibiekuang == obj.isshibiekuang && iswenzi == obj.iswenzi && tingjigeshu == obj.tingjigeshu && isqiangguang == obj.isqiangguang && iszhongguang == obj.iszhongguang && isruoguang == obj.isruoguang;
+        return totalProductionVolume == obj.totalProductionVolume && isDebug == obj.isDebug && isDefect == obj.isDefect && isSaveImg == obj.isSaveImg && isshibiekuang == obj.isshibiekuang && iswenzi == obj.iswenzi && isqiangguang == obj.isqiangguang && iszhongguang == obj.iszhongguang && isruoguang == obj.isruoguang;
     }
 
     inline bool HandleScannerConfig::operator!=(const HandleScannerConfig& obj) const

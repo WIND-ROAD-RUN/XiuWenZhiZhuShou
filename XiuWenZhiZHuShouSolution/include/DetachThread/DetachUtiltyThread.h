@@ -15,16 +15,12 @@ public:
 	void startThread();
 
 	void stopThread();
-
-
 protected:
 	void run() override;
 private:
 	void CalculateRealtimeInformation(size_t s);
-	void CalculateIsProduceCountReachingTheSetValue(size_t s);
 signals:
 	void updateStatisticalInfo();
-	void produceCountReachingTheSetValue();
 private:
 	int lastProduceCount{ 0 };
 private:

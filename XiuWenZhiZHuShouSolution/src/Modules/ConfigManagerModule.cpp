@@ -15,9 +15,6 @@ bool ConfigManagerModule::build()
 		handleScannerConfig = *loadMainWindowConfig;
 		runtimeModule.isTakePictures = handleScannerConfig.isSaveImg;
 		runtimeModule.statisticalInfo.produceCount = handleScannerConfig.totalProductionVolume;
-		runtimeModule.statisticalInfo.wasteCount = handleScannerConfig.totalDefectiveVolume;
-		runtimeModule.statisticalInfo.productionYield = handleScannerConfig.productionYield;
-		runtimeModule.statisticalInfo.handleCountForStop = handleScannerConfig.tingjigeshu;
 	}
 #pragma endregion
 

@@ -82,7 +82,6 @@ void HandleScanner::build_connect()
 	connect(ui->rbtn_strongLight, &QRadioButton::toggled, this, &HandleScanner::rbtn_strongLight_checked);
 	connect(ui->rbtn_mediumLight, &QRadioButton::toggled, this, &HandleScanner::rbtn_mediumLight_checked);
 	connect(ui->rbtn_weakLight, &QRadioButton::toggled, this, &HandleScanner::rbtn_weakLight_checked);
-	connect(ui->btn_tingjigeshu, &QPushButton::clicked, this, &HandleScanner::btn_tingjigeshu_clicked);
 	connect(ui->pbtn_resetProduct, &QPushButton::clicked, this, &HandleScanner::pbtn_resetProduct_clicked);
 
 	// 连接显示标题
@@ -103,8 +102,6 @@ void HandleScanner::build_HandleScannerData()
 	handleScannerConfig.iswenzi = true;
 
 	ui->label_produceTotalValue->setText(QString::number(handleScannerConfig.totalProductionVolume));
-	ui->label_wasteProductsValue->setText(QString::number(handleScannerConfig.totalDefectiveVolume));
-	ui->label_productionYieldValue->setText(QString::number(handleScannerConfig.productionYield));
 	ui->rbtn_takePicture->setChecked(handleScannerConfig.isSaveImg);
 	ui->rbtn_removeFunc->setChecked(handleScannerConfig.isDefect);
 	ui->ckb_shibiekuang->setChecked(handleScannerConfig.isshibiekuang);
@@ -129,6 +126,9 @@ void HandleScanner::build_HandleScannerData()
 
 	// 读取本地存图地址
 	loadSaveImgPath();
+
+	// 通信日志只读
+	ui->plainTextEdit_communication->setReadOnly(true);
 }
 
 void HandleScanner::ini_clickableTitle()
@@ -167,7 +167,6 @@ void HandleScanner::build_camera()
 	auto& cameraModules = Modules::getInstance().cameraModule;
 	auto errors = cameraModules.getBuildResults();
 	updateCameraLabelState(1,true);
-	updateCameraLabelState(2,true);
 
 	for (const auto& error : errors)
 	{
@@ -326,16 +325,6 @@ void HandleScanner::updateCameraLabelState(int cameraIndex, bool state)
 			ui->label_camera1State->setStyleSheet(QString("QLabel{color:rgb(230, 0, 0);} "));
 		}
 		break;
-	case 2:
-		if (state) {
-			ui->label_camera2State->setText("连接成功");
-			ui->label_camera2State->setStyleSheet(QString("QLabel{color:rgb(0, 230, 0);} "));
-		}
-		else {
-			ui->label_camera2State->setText("连接失败");
-			ui->label_camera2State->setStyleSheet(QString("QLabel{color:rgb(230, 0, 0);} "));
-		}
-		break;
 	default:
 		break;
 	}
@@ -345,8 +334,6 @@ void HandleScanner::onUpdateStatisticalInfoUI()
 {
 	auto& statisticalInfo = Modules::getInstance().runtimeInfoModule.statisticalInfo;
 	ui->label_produceTotalValue->setText(QString::number(statisticalInfo.produceCount.load()));
-	ui->label_wasteProductsValue->setText(QString::number(statisticalInfo.wasteCount.load()));
-	ui->label_productionYieldValue->setText(QString::number(statisticalInfo.productionYield.load(), 'f', 2) + "%");
 }
 
 void HandleScanner::onCameraNGDisplay(QPixmap image, size_t index, bool isbad)
@@ -430,6 +417,20 @@ void HandleScanner::lb_title_clicked()
 		minimizeCount = 3; // 重置最小化计数器
 	}
 
+}
+
+void HandleScanner::appendTcpLog(const QString text)
+{
+	if (ui->plainTextEdit_communication)
+	{
+		// AutoConnection: 若在 UI 线程内则直调，否则排队到 UI 线程
+		QMetaObject::invokeMethod(
+			ui->plainTextEdit_communication,
+			"appendPlainText",
+			Qt::AutoConnection,
+			Q_ARG(QString, text)
+		);
+	}
 }
 
 void HandleScanner::pbtn_exit_clicked()
@@ -664,35 +665,12 @@ void HandleScanner::rbtn_weakLight_checked(bool isChecked)
 	handleScannerConfig.isruoguang = true;
 }
 
-void HandleScanner::btn_tingjigeshu_clicked()
-{
-	auto& handleScannerConfig = Modules::getInstance().configManagerModule.handleScannerConfig;
-	NumberKeyboard numKeyBord;
-	numKeyBord.setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
-	auto isAccept = numKeyBord.exec();
-	if (isAccept == QDialog::Accepted)
-	{
-		auto value = numKeyBord.getValue();
-		if (value.toDouble() < 0)
-		{
-			QMessageBox::warning(this, "提示", "请输入大于0的数值");
-			return;
-		}
-		ui->btn_tingjigeshu->setText(value);
-		handleScannerConfig.tingjigeshu = value.toUInt();
-	}
-}
-
 void HandleScanner::pbtn_resetProduct_clicked()
 {
 	auto& handleScannerConfig = Modules::getInstance().configManagerModule.handleScannerConfig;
 	auto& statisticalInfo = Modules::getInstance().runtimeInfoModule.statisticalInfo;
 	statisticalInfo.produceCount = 0;
-	statisticalInfo.wasteCount = 0;
-	statisticalInfo.productionYield = 0.0;
 	handleScannerConfig.totalProductionVolume = 0;
-	handleScannerConfig.totalDefectiveVolume = 0;
-	handleScannerConfig.productionYield = 0.0;
 	onUpdateStatisticalInfoUI();
 }
 
