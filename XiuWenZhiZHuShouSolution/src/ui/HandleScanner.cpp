@@ -198,15 +198,8 @@ void HandleScanner::build_ImageEnlargedDisplay()
 	imgDisNg2->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding);
 
 	ui->gBoix_ImageDisplay->layout()->replaceWidget(ui->label_imgDisplay_1, imgDis1);
-	ui->gBoix_ImageDisplay->layout()->replaceWidget(ui->label_imgDisplay_3, imgDis2);
-
-	ui->gBoix_ImageDisplay->layout()->replaceWidget(ui->label_imgDisplay_2, imgDisNg1);
-	ui->gBoix_ImageDisplay->layout()->replaceWidget(ui->label_imgDisplay_4, imgDisNg2);
 
 	delete ui->label_imgDisplay_1;
-	delete ui->label_imgDisplay_3;
-	delete ui->label_imgDisplay_2;
-	delete ui->label_imgDisplay_4;
 
 	QObject::connect(imgDis1, &rw::rqw::ClickableLabel::clicked
 		, this, &HandleScanner::imgDis1_clicked);
