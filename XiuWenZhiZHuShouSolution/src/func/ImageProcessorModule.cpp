@@ -84,6 +84,18 @@ void ImageProcessorHandleScanner::run_debug(MatInfo& frame)
 	auto defectResult = imgPro.getDefectResultInfo();
 	auto proResult = imgPro.getProcessResult();
 
+	if (proResult.size()!=0)
+	{
+		auto body = proResult[0];
+		QString message{};
+		message += QString("center_x:%1 ").arg(body.center_x);
+		message += QString("center_y:%1 ").arg(body.center_y);
+		message += QString("angle:%1 ").arg(body.area);
+		Modules::getInstance().communicationModule.broadcastMessage(message);
+	}
+
+	
+
 	emit imageNGReady(QPixmap::fromImage(maskImg), frame.index, defectResult.isBad);
 }
 
@@ -334,7 +346,7 @@ void ImageProcessorHandleScanner::buildDetModelEngine(const QString& enginePath)
 	modelEngineConfig.imagePretreatmentPolicy = rw::ImagePretreatmentPolicy::LetterBox;
 	modelEngineConfig.letterBoxColor = cv::Scalar(114, 114, 114);
 	modelEngineConfig.modelPath = enginePath.toStdString();
-	auto engine = rw::ModelEngineFactory::createModelEngine(modelEngineConfig, rw::ModelType::Yolov11_Det, rw::ModelEngineDeployType::TensorRT);
+	auto engine = rw::ModelEngineFactory::createModelEngine(modelEngineConfig, rw::ModelType::Yolov11_Obb, rw::ModelEngineDeployType::TensorRT);
 	_imgProcess = std::make_unique<rw::imgPro::ImageProcess>(engine);
 	_imgProcess->context() = Modules::getInstance().imgProModule.imageProcessContext_Main;
 	_imgProcess->context().customFields["ImgProcessIndex"] = static_cast<int>(imageProcessingModuleIndex);
@@ -385,10 +397,10 @@ ImageProcessingModuleHandleScanner::~ImageProcessingModuleHandleScanner()
 
 void ImageProcessingModuleHandleScanner::onFrameCaptured(cv::Mat frame, size_t index)
 {
-	// 手动读取本地图片
-	//std::string imagePath = R"(C:\Users\rw\Desktop\bashou\cuode\NG120251007150610875.jpg)"; // 替换为你的图片路径
-	//cv::Mat frame1 = cv::imread(imagePath, cv::IMREAD_COLOR);
-	//frame = frame1.clone();
+	//手动读取本地图片
+	std::string imagePath = R"(C:\Users\rw\Desktop\1\Image_20251024144224571.jpg)"; // 替换为你的图片路径
+	cv::Mat frame1 = cv::imread(imagePath, cv::IMREAD_COLOR);
+	frame = frame1.clone();
 	if (frame.channels() == 4) {
 		cv::cvtColor(frame, frame, cv::COLOR_BGRA2BGR);
 	}

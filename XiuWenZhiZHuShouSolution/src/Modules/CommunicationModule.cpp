@@ -112,3 +112,73 @@ void CommunicationModule::onClientDisconnected()
     }
     client->deleteLater();
 }
+
+void CommunicationModule::sendMessageToClient(QTcpSocket* client, const QString& message)
+{
+    if (!client) return;
+
+    QByteArray payload = message.toUtf8();
+    QPointer<QTcpSocket> sock(client);
+
+    // 把写操作排到 socket 所在线程执行，避免跨线程直接操作 socket
+    QMetaObject::invokeMethod(client, [sock, payload]() {
+        if (!sock) return;
+        if (sock->state() != QAbstractSocket::ConnectedState) return;
+        sock->write(payload);
+        }, Qt::QueuedConnection);
+}
+
+void CommunicationModule::broadcastMessage(const QString& message)
+{
+    QByteArray payload = message.toUtf8();
+
+    // 复制当前客户端指针列表（受 mutex 保护）
+    QList<QPointer<QTcpSocket>> clientsCopy;
+    {
+        QMutexLocker locker(&clientsMutex_);
+        clientsCopy = clients_;
+    }
+
+    for (const QPointer<QTcpSocket>& sockPtr : clientsCopy) {
+        QPointer<QTcpSocket> s = sockPtr;
+        if (!s) continue;
+        // 将写操作排入该 socket 所在线程
+        QMetaObject::invokeMethod(s.data(), [s, payload]() {
+            if (!s) return;
+            if (s->state() != QAbstractSocket::ConnectedState) return;
+            s->write(payload);
+            }, Qt::QueuedConnection);
+    }
+}
+
+bool CommunicationModule::sendMessageToClientByAddress(const QHostAddress& addr, quint16 port, const QString& message)
+{
+    QByteArray payload = message.toUtf8();
+
+    // 复制一份客户端指针快照，避免在迭代时持锁或被修改
+    QList<QPointer<QTcpSocket>> clientsCopy;
+    {
+        QMutexLocker locker(&clientsMutex_);
+        clientsCopy = clients_;
+    }
+
+    for (const QPointer<QTcpSocket>& sockPtr : clientsCopy) {
+        QPointer<QTcpSocket> s = sockPtr;
+        if (!s) continue;
+
+        if (s->peerAddress() == addr && s->peerPort() == port) {
+            // 将写操作排到 socket 所在线程执行，避免跨线程直接操作 QTcpSocket
+            QMetaObject::invokeMethod(s.data(), [s, payload]() {
+                if (!s) return;
+                if (s->state() != QAbstractSocket::ConnectedState) return;
+                s->write(payload);
+                }, Qt::QueuedConnection);
+
+            // 找到目标并已排队写入（异步），返回 true 表示已成功排队
+            return true;
+        }
+    }
+
+    // 未找到匹配客户端
+    return false;
+}

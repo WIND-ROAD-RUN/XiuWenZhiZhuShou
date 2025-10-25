@@ -90,7 +90,7 @@ public: // 输出
 inline struct GlobalPath
 {
 public:
-	QString projectHome = R"(D:\zfkjData\HandleScanner\)";
+	QString projectHome = R"(D:\zfkjData\XiuWenZhiZHuShouSolution\)";
 public:
 	QString configRootPath = projectHome + R"(config\)";
 	QString modelRootPath = projectHome + R"(model\)";
@@ -99,7 +99,7 @@ public:
 	QString HandleScannerConfigPath = configRootPath + R"(HandleScannerConfig.xml)";
 	QString DlgProductScoreConfigPath = configRootPath + R"(DlgProductScoreConfig.xml)";
 	QString DlgProductSetConfigPath = configRootPath + R"(DlgProductSetConfig.xml)";
-	QString modelPath = modelRootPath + R"(HandleScanner.engine)";
+	QString modelPath = modelRootPath + R"(XiuWenZhiZHuShouSolution.engine)";
 	QString companyTxtPath = txtPath + R"(Company.txt)";
 	QString saveAddressTxtPath = txtPath + R"(SaveAddress.txt)";
 public:

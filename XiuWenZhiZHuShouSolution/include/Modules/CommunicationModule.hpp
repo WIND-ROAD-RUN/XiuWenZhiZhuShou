@@ -21,7 +21,10 @@ private slots:
 	void onNewConnection();
 	void onClientReadyRead();
 	void onClientDisconnected();
-
+public:
+	void sendMessageToClient(QTcpSocket* client, const QString& message);
+	void broadcastMessage(const QString& message);
+	bool sendMessageToClientByAddress(const QHostAddress& addr, quint16 port, const QString& message);
 private:
 	QTcpServer* tcpServer_{ nullptr };
 	QList<QPointer<QTcpSocket>> clients_;
