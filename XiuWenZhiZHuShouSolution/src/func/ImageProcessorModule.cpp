@@ -410,7 +410,7 @@ ImageProcessingModuleHandleScanner::~ImageProcessingModuleHandleScanner()
 void ImageProcessingModuleHandleScanner::onFrameCaptured(cv::Mat frame, size_t index)
 {
 	//手动读取本地图片
-	std::string imagePath = R"(C:\Users\rw\Desktop\1\Image_20251024144541273.jpg)"; // 替换为你的图片路径
+	std::string imagePath = R"(C:\Users\zfkj4090\Desktop\xiuwenzhizhushouOBB\train\images\Image_20251024144247939.jpg)"; // 替换为你的图片路径
 	cv::Mat frame1 = cv::imread(imagePath, cv::IMREAD_COLOR);
 	frame = frame1.clone();
 	if (frame.channels() == 4) {

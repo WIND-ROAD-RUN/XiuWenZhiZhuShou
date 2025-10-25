@@ -178,6 +178,11 @@ void Modules::connect()
 		&motionControllerModule, &MotionControllerModule::getStopSignal, Qt::QueuedConnection);
 #pragma endregion
 
+#pragma region connect UIModule and CommunicationModule
+	QObject::connect(&communicationModule, &CommunicationModule::updateMainwindowUi,
+		uiModule._handleScanner, &HandleScanner::updateCameraLabelState);
+#pragma endregion
+
 }
 
 bool Modules::check()

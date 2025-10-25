@@ -9,7 +9,7 @@
 #include"IModule.hpp"
 
 class CommunicationModule
-	:public QObject,public IModule<bool>
+	:public QObject, public IModule<bool>
 {
 	Q_OBJECT
 public:
@@ -21,6 +21,8 @@ private slots:
 	void onNewConnection();
 	void onClientReadyRead();
 	void onClientDisconnected();
+signals:
+	void updateMainwindowUi(int cameraIndex, bool state);
 public:
 	void sendMessageToClient(QTcpSocket* client, const QString& message);
 	void broadcastMessage(const QString& message);
