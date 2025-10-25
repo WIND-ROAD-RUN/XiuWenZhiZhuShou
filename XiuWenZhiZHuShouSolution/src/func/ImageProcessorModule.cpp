@@ -90,7 +90,7 @@ void ImageProcessorHandleScanner::run_debug(MatInfo& frame)
 		QString message{};
 		message += QString("center_x:%1 ").arg(body.center_x);
 		message += QString("center_y:%1 ").arg(body.center_y);
-		message += QString("angle:%1 ").arg(body.area);
+		message += QString("angle:%1 ").arg(body.angle);
 		Modules::getInstance().communicationModule.broadcastMessage(message);
 	}
 
@@ -245,6 +245,18 @@ void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
 	rw::rqw::ImageInfo imageInfo(rw::rqw::cvMatToQImage(frame.image));
 
 	save_image(imageInfo, maskImg);
+
+	auto proResult = imgPro.getProcessResult();
+
+	if (proResult.size() != 0)
+	{
+		auto body = proResult[0];
+		QString message{};
+		message += QString("center_x:%1 ").arg(body.center_x);
+		message += QString("center_y:%1 ").arg(body.center_y);
+		message += QString("angle:%1 ").arg(body.angle);
+		Modules::getInstance().communicationModule.broadcastMessage(message);
+	}
 }
 
 void ImageProcessorHandleScanner::run_OpenRemoveFunc_emitErrorInfo(bool isbad)
@@ -398,7 +410,7 @@ ImageProcessingModuleHandleScanner::~ImageProcessingModuleHandleScanner()
 void ImageProcessingModuleHandleScanner::onFrameCaptured(cv::Mat frame, size_t index)
 {
 	//手动读取本地图片
-	std::string imagePath = R"(C:\Users\rw\Desktop\1\Image_20251024144224571.jpg)"; // 替换为你的图片路径
+	std::string imagePath = R"(C:\Users\rw\Desktop\1\Image_20251024144541273.jpg)"; // 替换为你的图片路径
 	cv::Mat frame1 = cv::imread(imagePath, cv::IMREAD_COLOR);
 	frame = frame1.clone();
 	if (frame.channels() == 4) {
