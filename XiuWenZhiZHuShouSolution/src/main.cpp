@@ -2,7 +2,7 @@
 #include <QtWidgets/QApplication>
 #include "rqw_RunEnvCheck.hpp"
 #include "Utilty.hpp"
-#include "HandleScanner.h"
+#include "XiuWenZhiZHuShou.h"
 #include "Modules.hpp"
 
 int main(int argc, char* argv[])

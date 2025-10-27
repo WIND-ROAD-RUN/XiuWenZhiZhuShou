@@ -1,6 +1,6 @@
-#include "ui_HandleScanner.h"
+#include "ui_XiuWenZhiZHuShou.h"
 
-#include "HandleScanner.h"
+#include "XiuWenZhiZHuShou.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -13,7 +13,6 @@
 #include "NumberKeyboard.h"
 #include "rqw_RunEnvCheck.hpp"
 #include "RuntimeInfoModule.hpp"
-#include "ui_DlgProductScore.h"
 #include "ui_DlgProductSet.h"
 #include"Utilty.hpp"
 
@@ -33,7 +32,7 @@ void HandleScanner::cBox_testPushImg_checked(bool checked)
 
 HandleScanner::HandleScanner(QWidget* parent)
 	: QMainWindow(parent)
-	, ui(new Ui::PunchPressClass())
+	, ui(new Ui::XiuWenZhiZHuShouClass())
 {
 	ui->setupUi(this);
 
@@ -136,7 +135,7 @@ void HandleScanner::ini_clickableTitle()
 	auto layoutTitle = ui->groupBox_head->layout();
 	layoutTitle->replaceWidget(ui->label_title, clickableTitle);
 	delete ui->label_title;
-	clickableTitle->setText("把手检测");
+	clickableTitle->setText("蜘蛛手检测");
 	clickableTitle->setStyleSheet("QLabel {font-size: 30px;font-weight: bold;color: rgb(255, 255, 255);padding: 5px 5px;border-bottom: 2px solid #cccccc;}");
 }
 

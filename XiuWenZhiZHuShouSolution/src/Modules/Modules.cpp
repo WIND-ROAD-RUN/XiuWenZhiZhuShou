@@ -3,7 +3,7 @@
 #include <QMessageBox>
 
 #include "DlgProductSet.h"
-#include "HandleScanner.h"
+#include "XiuWenZhiZHuShou.h"
 #include "rqw_RunEnvCheck.hpp"
 
 Modules::Modules()

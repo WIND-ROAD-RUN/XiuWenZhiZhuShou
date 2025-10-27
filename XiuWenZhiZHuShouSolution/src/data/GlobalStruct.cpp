@@ -1,6 +1,5 @@
 #include "GlobalStruct.hpp"
 
-#include "HandleScanner.h"
 #include "Utilty.hpp"
 #include <QRegularExpression>
 #include "Modules.hpp"

@@ -1,7 +1,6 @@
 #include "UIModule.hpp"
 #include "DlgProductSet.h"
 #include "rqw_LabelWarning.h"
-#include "ui_DlgProductScore.h"
 #include "ui_DlgProductSet.h"
 
 void UIModule::build()

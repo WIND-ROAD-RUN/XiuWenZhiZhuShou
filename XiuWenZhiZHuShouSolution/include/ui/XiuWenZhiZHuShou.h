@@ -8,7 +8,7 @@
 #include<QCheckBox>
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class PunchPressClass; };
+namespace Ui { class XiuWenZhiZHuShouClass; };
 QT_END_NAMESPACE
 
 class HandleScanner : public QMainWindow
@@ -96,7 +96,7 @@ private slots:
 
 	
 private:
-	Ui::PunchPressClass* ui;
+	Ui::XiuWenZhiZHuShouClass* ui;
 	int minimizeCount{ 3 };
 private:
 	PictureViewerThumbnails* _picturesViewer = nullptr;
