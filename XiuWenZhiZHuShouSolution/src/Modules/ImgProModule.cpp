@@ -1,13 +1,13 @@
 #include "ImgProModule.hpp"
-
 #include "Modules.hpp"
+#include "osoFIleUtiltyFunc.hpp"
 #include "Utilty.hpp"
 
 bool ImgProModule::build()
 {
 	buildImgProContext();
 	buildImageProcessingModule(imgProSignalWorkThreadNum);
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		imgProIsUpdate[i] = true;
 	}
@@ -37,14 +37,11 @@ void ImgProModule::buildImgProContext()
 void ImgProModule::buildImgProContextMain()
 {
 	auto& runningState = Modules::getInstance().runtimeInfoModule.runningState;
-	auto& handleScannerConfig = Modules::getInstance().configManagerModule.handleScannerConfig;
+	auto& mainWindowConfig = Modules::getInstance().configManagerModule.mainWindowConfig;
 
 #pragma region  build base
-	imageProcessContext_Main.imageProcessPrepare = [this, &runningState, &handleScannerConfig](rw::imgPro::ImageProcessContext& context)
+	imageProcessContext_Main.imageProcessPrepare = [this, &runningState, &mainWindowConfig](rw::imgPro::ImageProcessContext& context)
 		{
-			imageCenterX = 0;
-			bodyCount = 0;
-
 			if (context.customFields.find("ImgProcessIndex") == context.customFields.end()) {
 				return;
 			}
@@ -61,9 +58,19 @@ void ImgProModule::buildImgProContextMain()
 			{
 				if (1 == ImgProcessIndex)
 				{
-					//currentPixToWorld = setConfig.xiangSuDangLiang1;
+					currentPixToWorld = mainWindowConfig.xiangsudangliang;
 				}
 				context.customFields["CurrentPixToWorld"] = static_cast<double>(currentPixToWorld);
+			}
+
+			//update Config
+			{
+				if (imgProIsUpdate[stationIdx])
+				{
+					context.eliminationCfg = cdm::ScoreConfigConvert::toClassIdWithEliConfigMap(currentPixToWorld * currentPixToWorld, 100);
+					context.defectCfg = cdm::ScoreConfigConvert::toClassIdWithDefConfigMap();
+					imgProIsUpdate[stationIdx] = false;
+				}
 			}
 
 			// update drawConfig
@@ -72,44 +79,21 @@ void ImgProModule::buildImgProContextMain()
 				{
 					context.defectDrawCfg.textLocate = rw::imgPro::ConfigDrawRect::TextLocate::LeftTopIn;
 
-					if (handleScannerConfig.isshibiekuang)
-					{
-						context.defectDrawCfg.isDrawDefects = true;
-						context.defectDrawCfg.isDrawDisableDefects = true;
-						context.defectDrawCfg.isDisAreaText = true;
-						context.defectDrawCfg.isDisScoreText = true;
-					}
-					else
-					{
-						context.defectDrawCfg.isDrawDefects = false;
-						context.defectDrawCfg.isDrawDisableDefects = false;
-						context.defectDrawCfg.isDisAreaText = false;
-						context.defectDrawCfg.isDisScoreText = false;
-					}
-
-					if (handleScannerConfig.iswenzi)
-					{
-						context.runTextCfg.isDrawExtraText = true;
-					}
-					else
-					{
-						context.runTextCfg.isDrawExtraText = false;
-					}
+					context.defectDrawCfg.isDrawDefects = true;
+					context.defectDrawCfg.isDrawDisableDefects = true;
+					context.defectDrawCfg.isDisAreaText = false;
+					context.defectDrawCfg.isDisScoreText = false;
+					context.runTextCfg.isDrawExtraText = false;
 				}
 				else if (RunningState::OpenRemoveFunc == runningState)
 				{
 					context.defectDrawCfg.isDrawDefects = true;
 					context.defectDrawCfg.isDrawDisableDefects = true;
-					context.defectDrawCfg.isDisAreaText = true;
-					context.defectDrawCfg.isDisScoreText = true;
-
+					context.defectDrawCfg.isDisAreaText = false;
+					context.defectDrawCfg.isDisScoreText = false;
 					context.runTextCfg.isDrawExtraText = false;
 				}
 			}
-
-			context.customFields["BodyIndexWithDefectsIndexMap"] = BodyIndexWithDefectsIndexMap();
-			context.customFields["DefectsIndexWithBodyIndex"] = DefectsIndexWithBodyIndex();
-			context.customFields["DefectBoxs"] = DefectBoxs();
 		};
 #pragma endregion
 
@@ -152,17 +136,11 @@ void ImgProModule::buildImageProcessingModule(size_t num)
 	imageProcessingModule1->modelEnginePath = globalPath.modelPath;
 	imageProcessingModule1->index = 1;
 	imageProcessingModule1->BuildModule();
-
-	imageProcessingModule2 = std::make_unique<ImageProcessingModuleHandleScanner>(num, this);
-	imageProcessingModule2->modelEnginePath = globalPath.modelPath;
-	imageProcessingModule2->index = 2;
-	imageProcessingModule2->BuildModule();
 }
 
 void ImgProModule::destroyImageProcessingModule()
 {
 	imageProcessingModule1.reset();
-	imageProcessingModule2.reset();
 }
 
 void ImgProModule::onUpdateImgProContext()

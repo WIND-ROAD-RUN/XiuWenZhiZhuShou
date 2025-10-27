@@ -9,7 +9,6 @@
 enum BuildError
 {
 	Camera1Error = 1,
-	Camera2Error = 2
 };
 
 class CameraModule

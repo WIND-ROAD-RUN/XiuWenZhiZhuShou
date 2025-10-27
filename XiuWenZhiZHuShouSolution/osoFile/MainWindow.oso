@@ -1,0 +1,11 @@
+#include <string>
+
+namespace cdm {
+	class MainWindowConfig
+	{
+	public:
+		isDebug : bool :default = false;
+		isDefect : bool :default = false;
+		xiangsudangliang : double :default = 0.0;
+	};
+}

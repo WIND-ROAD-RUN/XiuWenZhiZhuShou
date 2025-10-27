@@ -37,19 +37,6 @@ bool Modules::build()
 	// 构建重连模块
 	reconnectModule.build();
 
-	// 构建消除模块
-	auto eliminateModuleBuild = eliminateModule.build();
-
-	// 构建图像保存模块
-	imgSaveModule.build();
-
-	// 构建运动控制模块
-	auto motionControllerModuleBuild = motionControllerModule.build();
-
-	// 构建报警模块
-	warningModule.build();
-
-
 #ifdef BUILD_WITHOUT_HARDWARE
 	test_module.build();
 #endif
@@ -71,10 +58,6 @@ void Modules::destroy()
 	configManagerModule.destroy();
 	uiModule.destroy();
 	reconnectModule.destroy();
-	eliminateModule.destroy();
-	imgSaveModule.destroy();
-	motionControllerModule.destroy();
-	warningModule.destroy();
 	communicationModule.destroy();
 }
 
@@ -83,11 +66,7 @@ void Modules::start()
 	uiModule.start();
 	configManagerModule.start();
 	communicationModule.start();
-	motionControllerModule.start();
 	runtimeInfoModule.start();
-	warningModule.start();
-	imgSaveModule.start();
-	eliminateModule.start();
 	imgProModule.start();
 	cameraModule.start();
 	reconnectModule.start();
@@ -106,11 +85,7 @@ void Modules::stop()
 	reconnectModule.stop();
 	cameraModule.stop();
 	imgProModule.stop();
-	eliminateModule.stop();
-	imgSaveModule.stop();
-	warningModule.stop();
 	runtimeInfoModule.stop();
-	motionControllerModule.stop();
 	configManagerModule.stop();
 	uiModule.stop();
 	communicationModule.stop();
@@ -127,11 +102,7 @@ void Modules::connect()
 
 #pragma region connect UIModule and imgProModule
 	QObject::connect(imgProModule.imageProcessingModule1.get(), &ImageProcessingModuleHandleScanner::imageNGReady, uiModule._handleScanner, &HandleScanner::onCameraNGDisplay);
-	QObject::connect(imgProModule.imageProcessingModule2.get(), &ImageProcessingModuleHandleScanner::imageNGReady, uiModule._handleScanner, &HandleScanner::onCameraNGDisplay);
 	QObject::connect(imgProModule.imageProcessingModule1.get(), &ImageProcessingModuleHandleScanner::updateMainWindowShowTXT, uiModule._handleScanner, &HandleScanner::appendTcpLog);
-
-	QObject::connect(uiModule._handleScanner, &HandleScanner::shibiekuangChanged, &imgProModule, &ImgProModule::onUpdateImgProContext);
-	QObject::connect(uiModule._handleScanner, &HandleScanner::wenziChanged, &imgProModule, &ImgProModule::onUpdateImgProContext);
 #pragma endregion
 
 #pragma region connect UIModule and ReconnectModule
@@ -155,11 +126,6 @@ void Modules::connect()
 	/*QObject::connect(test_module.testImgPushThread.get(), &TestImgPushThread::imgReady,
 		imgProModule.imageProcessingModule2.get(), &ImageProcessingModuleHandleScanner::onFrameCaptured, Qt::DirectConnection);*/
 #endif
-
-#pragma region connect UIModule and RuntimeInfoModule
-	QObject::connect(runtimeInfoModule.detachUtiltyThread.get(), &DetachUtiltyThread::updateStatisticalInfo,
-		uiModule._handleScanner, &HandleScanner::onUpdateStatisticalInfoUI, Qt::QueuedConnection);
-#pragma endregion
 
 #pragma region connect UIModule and CommunicationModule
 	QObject::connect(&communicationModule, &CommunicationModule::updateMainwindowUi,
@@ -198,7 +164,6 @@ bool Modules::check()
 	EnsureDirectoryExists(globalPath.configRootPath);
 	EnsureDirectoryExists(globalPath.modelRootPath);
 	EnsureDirectoryExists(globalPath.txtPath);
-	EnsureDirectoryExists(globalPath.imageSaveRootPath);
 #pragma endregion
 
 #pragma region check model exist
@@ -212,7 +177,7 @@ bool Modules::check()
 #pragma region check config format and exist
 	rw::oso::StorageContext storageContext(rw::oso::StorageType::Xml);
 
-	checkFileExistAndFormat<cdm::HandleScannerConfig>(globalPath.HandleScannerConfigPath, storageContext);
+	checkFileExistAndFormat<cdm::MainWindowConfig>(globalPath.MainWindowConfigPath, storageContext);
 #pragma endregion
 
 	return true;

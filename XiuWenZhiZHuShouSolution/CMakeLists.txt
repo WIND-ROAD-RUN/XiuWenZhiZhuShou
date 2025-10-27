@@ -92,7 +92,7 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 )
 
 # 可配置的部署输出目录（默认=目标可执行文件目录）
-set(TXTOUTPUT_DIR "D:/zfkjData/HandleScanner/txt" CACHE PATH "Post-build destination for *.txt files")
+set(TXTOUTPUT_DIR "D:/zfkjData/XiuWenZhiZHuShouSolution/txt" CACHE PATH "Post-build destination for *.txt files")
 
 # 确保输出目录存在
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD

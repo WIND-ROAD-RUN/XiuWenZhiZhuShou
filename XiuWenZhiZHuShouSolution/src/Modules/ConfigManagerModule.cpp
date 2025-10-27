@@ -6,15 +6,12 @@
 bool ConfigManagerModule::build()
 {
     storeContext = std::make_unique<rw::oso::StorageContext>(rw::oso::StorageType::Xml);
-	auto& runtimeModule = Modules::getInstance().runtimeInfoModule;
 
 #pragma region readHandleScannerCfg
-	auto loadMainWindowConfig = storeContext->loadSafe(globalPath.HandleScannerConfigPath.toStdString());
+	auto loadMainWindowConfig = storeContext->loadSafe(globalPath.MainWindowConfigPath.toStdString());
 	if (loadMainWindowConfig)
 	{
-		handleScannerConfig = *loadMainWindowConfig;
-		runtimeModule.isTakePictures = handleScannerConfig.isSaveImg;
-		runtimeModule.statisticalInfo.produceCount = handleScannerConfig.totalProductionVolume;
+		mainWindowConfig = *loadMainWindowConfig;
 	}
 #pragma endregion
 
@@ -23,14 +20,14 @@ bool ConfigManagerModule::build()
 
 void ConfigManagerModule::destroy()
 {
-	storeContext->saveSafe(handleScannerConfig, globalPath.HandleScannerConfigPath.toStdString());
+	storeContext->saveSafe(mainWindowConfig, globalPath.MainWindowConfigPath.toStdString());
 	storeContext.reset();
 }
 
 void ConfigManagerModule::start()
 {
-	handleScannerConfig.isDebug = false;
-	handleScannerConfig.isDefect = true;
+	mainWindowConfig.isDebug = false;
+	mainWindowConfig.isDefect = true;
 }
 
 void ConfigManagerModule::stop()

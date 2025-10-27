@@ -12,7 +12,7 @@ class ImgProModule
 {
 	Q_OBJECT
 private:
-	static constexpr int  imgProSignalWorkThreadNum = 2;
+	static constexpr int  imgProSignalWorkThreadNum = 1;
 public:
 	bool build() override;
 	void destroy() override;
@@ -26,21 +26,12 @@ private:
 public:
 	rw::imgPro::ImageProcessContext imageProcessContext_Main;
 
-	std::atomic<bool> imgProIsUpdate[4];
+	std::atomic<bool> imgProIsUpdate[2];
 private:
 	void buildImageProcessingModule(size_t num);
 	void destroyImageProcessingModule();
 public:
 	std::unique_ptr<ImageProcessingModuleHandleScanner> imageProcessingModule1{ nullptr };
-	std::unique_ptr<ImageProcessingModuleHandleScanner> imageProcessingModule2{ nullptr };
 public slots:
 	void onUpdateImgProContext();
-private:
-	double imageCenterX{ 0 };
-	int bodyCount{ 0 };
-public:
-	QMutex lastBodyInfos1_Mutex;
-	std::vector<BodyInfo> lastBodyInfos1;
-	QMutex lastBodyInfos2_Mutex;
-	std::vector<BodyInfo> lastBodyInfos2;
 };

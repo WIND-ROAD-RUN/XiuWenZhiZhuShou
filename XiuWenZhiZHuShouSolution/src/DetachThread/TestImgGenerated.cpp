@@ -1,7 +1,5 @@
 #include "TestImgGenerated.hpp"
 
-#include "GlobalStruct.hpp"
-
 DetachTestImgThread::DetachTestImgThread(QObject* parent)
 	: QThread(parent), _running(false) {
 	mat1 = cv::imread(R"(C:\Users\zfkj4090\Desktop\TestImg\shijin\Image_20250730144219347_30.jpg)");

@@ -20,12 +20,6 @@ struct MatInfo {
 	size_t index;
 };
 
-struct BodyInfo
-{
-	float loc{ 0 };
-	bool isInner{ false };
-};
-
 class ImageProcessorHandleScanner : public QThread
 {
 	Q_OBJECT
@@ -43,13 +37,7 @@ protected:
 private:
 	void run_debug(MatInfo& frame);			
 private:
-	void run_OpenRemoveFunc(MatInfo& frame);	
-
-	void run_OpenRemoveFunc_emitErrorInfo(bool isbad);
-
-	// 存图
-	void save_image(rw::rqw::ImageInfo& imageInfo, const QImage& image);
-	void save_image_work(rw::rqw::ImageInfo& imageInfo, const QImage& image);
+	void run_OpenRemoveFunc(MatInfo& frame);
 
 signals:
 	void imageNGReady(QPixmap image, size_t index, bool isbad);
@@ -70,23 +58,9 @@ private:
 	QWaitCondition& _condition;
 	int _workIndex;
 public:
-	double imageCenterX{ 0 };
-	int bodyCount{ 0 };
-	
-	using DefectIndex = rw::imgPro::ProcessResultIndex;
-	using BodyIndex = rw::imgPro::ProcessResultIndex;
-
 	int imageProcessingModuleIndex;
 
-	std::vector<DefectInfoForPriorityQueue> DefectBox{};
 	double pixToWorld{ 0 };
-	double tifeijuli1Inner{ 0 };
-	double tifeijuli1Outer{ 0 };
-	double tifeijuli2Inner{ 0 };
-	double tifeijuli2Outer{ 0 };
-
-	int index1Num{ 0 };
-	int index2Num{ 0 };
 };
 
 

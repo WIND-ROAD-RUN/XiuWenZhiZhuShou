@@ -1,6 +1,5 @@
 #include "CameraAndCardStateThread.h"
 
-#include "GlobalStruct.hpp"
 #include "Modules.hpp"
 #include "rqw_CameraObjectZMotion.hpp"
 

@@ -4,17 +4,13 @@
 
 #include"CameraModule.hpp"
 #include"ConfigManagerModule.hpp"
-#include "EliminateModule.hpp"
 #include "ImgProModule.hpp"
-#include "ImgSaveModule.hpp"
-#include "MotionControllerModule.hpp"
 #include "oso_func.hpp"
 #include "RuntimeInfoModule.hpp"
 #include "UIModule.hpp"
 #include "ReconnectModule.hpp"
 #include "rqw_RunEnvCheck.hpp"
 #include "TestModule.hpp"
-#include "WarningModule.hpp"
 #include"CommunicationModule.hpp"
 
 class Modules
@@ -56,10 +52,6 @@ public:
 	ImgProModule imgProModule;
 	UIModule uiModule;
 	ReconnectModule reconnectModule;
-	EliminateModule eliminateModule;
-	ImgSaveModule imgSaveModule;
-	MotionControllerModule motionControllerModule;
-	WarningModule warningModule;
 	CommunicationModule communicationModule;
 
 
