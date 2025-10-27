@@ -1,7 +1,6 @@
 #include "ImgProModule.hpp"
 
 #include "Modules.hpp"
-#include "osoFIleUtiltyFunc.hpp"
 #include "Utilty.hpp"
 
 bool ImgProModule::build()
@@ -48,7 +47,6 @@ void ImgProModule::buildImgProContextMain()
 			bodyCount = 0;
 
 			auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
-			auto& scoreConfig = Modules::getInstance().configManagerModule.scoreConfig;
 
 			if (context.customFields.find("ImgProcessIndex") == context.customFields.end()) {
 				return;
@@ -73,16 +71,6 @@ void ImgProModule::buildImgProContextMain()
 					currentPixToWorld = setConfig.xiangSuDangLiang2;
 				}
 				context.customFields["CurrentPixToWorld"] = static_cast<double>(currentPixToWorld);
-			}
-
-			//update Config
-			{
-				if (imgProIsUpdate[stationIdx])
-				{
-					context.eliminationCfg = cdm::ScoreConfigConvert::toClassIdWithEliConfigMap(scoreConfig, currentPixToWorld * currentPixToWorld, 100);
-					context.defectCfg = cdm::ScoreConfigConvert::toClassIdWithDefConfigMap(scoreConfig);
-					imgProIsUpdate[stationIdx] = false;
-				}
 			}
 
 			// update drawConfig

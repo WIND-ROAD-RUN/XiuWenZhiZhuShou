@@ -7,7 +7,6 @@
 #include <QMessageBox>
 #include <QProcess>
 
-#include "DlgProductScore.h"
 #include "DlgProductSet.h"
 #include "GlobalStruct.hpp"
 #include "Modules.hpp"
@@ -70,7 +69,6 @@ void HandleScanner::build_connect()
 {
 	connect(ui->pbtn_exit, &QPushButton::clicked, this, &HandleScanner::pbtn_exit_clicked);
 	connect(ui->pbtn_set, &QPushButton::clicked, this, &HandleScanner::pbtn_set_clicked);
-	connect(ui->pbtn_score, &QPushButton::clicked, this, &HandleScanner::pbtn_score_clicked);
 	connect(ui->rbtn_debug, &QRadioButton::toggled, this, &HandleScanner::rbtn_debug_checked);
 	connect(ui->rbtn_takePicture, &QRadioButton::toggled, this, &HandleScanner::rbtn_takePicture_checked);
 	connect(ui->rbtn_removeFunc, &QRadioButton::toggled, this, &HandleScanner::rbtn_removeFunc_checked);
@@ -402,13 +400,10 @@ void HandleScanner::lb_title_clicked()
 		this->showMinimized();
 
 		auto& _dlgProductSet = Modules::getInstance().uiModule._dlgProductSet;
-		auto& _dlgProductScore = Modules::getInstance().uiModule._dlgProductScore;
 
 		// 最小化所有子窗体（如果已创建且可见）
 		if (_dlgProductSet && _dlgProductSet->isVisible())
 			_dlgProductSet->showMinimized();
-		if (_dlgProductScore && _dlgProductScore->isVisible())
-			_dlgProductScore->showMinimized();
 		if (_picturesViewer && _picturesViewer->isVisible())
 			_picturesViewer->showMinimized();
 		if (_imageEnlargedDisplay && _imageEnlargedDisplay->isVisible())
@@ -463,14 +458,6 @@ void HandleScanner::pbtn_set_clicked()
 			QMessageBox::warning(this, "Error", "密码错误，请重新输入");
 		}
 	}
-}
-
-void HandleScanner::pbtn_score_clicked()
-{
-	auto& _dlgProductScore = Modules::getInstance().uiModule._dlgProductScore;
-	_dlgProductScore->setFixedSize(this->width(), this->height());
-	_dlgProductScore->setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
-	_dlgProductScore->exec();
 }
 
 void HandleScanner::rbtn_debug_checked(bool checked)

@@ -18,14 +18,6 @@ bool ConfigManagerModule::build()
 	}
 #pragma endregion
 
-#pragma region readscoreCfg
-	loadMainWindowConfig = storeContext->loadSafe(globalPath.DlgProductScoreConfigPath.toStdString());
-	if (loadMainWindowConfig)
-	{
-		scoreConfig = *loadMainWindowConfig;
-	}
-#pragma endregion
-
 #pragma region readsetCfg
 	loadMainWindowConfig = storeContext->loadSafe(globalPath.DlgProductSetConfigPath.toStdString());
 	if (loadMainWindowConfig)
@@ -40,7 +32,6 @@ bool ConfigManagerModule::build()
 void ConfigManagerModule::destroy()
 {
 	storeContext->saveSafe(handleScannerConfig, globalPath.HandleScannerConfigPath.toStdString());
-	storeContext->saveSafe(scoreConfig, globalPath.DlgProductScoreConfigPath.toStdString());
 	storeContext->saveSafe(setConfig, globalPath.DlgProductSetConfigPath.toStdString());
 	storeContext.reset();
 }

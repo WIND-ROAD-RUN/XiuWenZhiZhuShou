@@ -11,7 +11,6 @@ namespace rw::rqw
 }
 
 class HandleScanner;
-class DlgProductScore;
 class DlgProductSet;
 
 class UIModule
@@ -24,15 +23,9 @@ public:
 	void start() override;
 	void stop() override;
 public:
-	void ini_dlgProductScoreGroupList();
-	void ini_dlgProductSetCheckList();
-	void connectSetAndScore();
+
 public:
 	DlgProductSet* _dlgProductSet = nullptr;
-	DlgProductScore* _dlgProductScore = nullptr;
 	HandleScanner* _handleScanner = nullptr;
 	rw::rqw::LabelWarning* labelWarning = nullptr;
-
-	QVector<QCheckBox*> _dlgProductSetCheckList{};
-	QVector<QWidget*> _dlgProductScoreGroupList{};
 };

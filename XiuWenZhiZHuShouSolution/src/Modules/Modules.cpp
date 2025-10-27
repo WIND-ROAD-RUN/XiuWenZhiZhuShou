@@ -2,7 +2,6 @@
 
 #include <QMessageBox>
 
-#include "DlgProductScore.h"
 #include "DlgProductSet.h"
 #include "HandleScanner.h"
 #include "rqw_RunEnvCheck.hpp"
@@ -137,7 +136,6 @@ void Modules::connect()
 
 	QObject::connect(uiModule._handleScanner, &HandleScanner::shibiekuangChanged, &imgProModule, &ImgProModule::onUpdateImgProContext);
 	QObject::connect(uiModule._handleScanner, &HandleScanner::wenziChanged, &imgProModule, &ImgProModule::onUpdateImgProContext);
-	QObject::connect(uiModule._dlgProductScore, &DlgProductScore::scoreFormClosed, &imgProModule, &ImgProModule::onUpdateImgProContext);
 #pragma endregion
 
 #pragma region connect UIModule and ReconnectModule
@@ -227,7 +225,6 @@ bool Modules::check()
 
 	checkFileExistAndFormat<cdm::HandleScannerConfig>(globalPath.HandleScannerConfigPath, storageContext);
 	checkFileExistAndFormat<cdm::SetConfig>(globalPath.DlgProductSetConfigPath, storageContext);
-	checkFileExistAndFormat<cdm::ScoreConfig>(globalPath.DlgProductScoreConfigPath, storageContext);
 #pragma endregion
 
 	return true;
