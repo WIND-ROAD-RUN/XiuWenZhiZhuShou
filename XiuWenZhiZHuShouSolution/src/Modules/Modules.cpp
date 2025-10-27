@@ -2,7 +2,6 @@
 
 #include <QMessageBox>
 
-#include "DlgProductSet.h"
 #include "XiuWenZhiZHuShou.h"
 #include "rqw_RunEnvCheck.hpp"
 
@@ -151,13 +150,6 @@ void Modules::connect()
 	QObject::connect(reconnectModule.monitorCameraAndCardStateThread.get(), &CameraAndCardStateThreadHandleScanner::destroyCamera,
 		&cameraModule, &CameraModule::onDestroyCamera, Qt::QueuedConnection);
 
-#pragma endregion
-
-#pragma region connect UIModule and MotionControllerModule
-	QObject::connect(motionControllerModule.monitorMotionIoStateThread.get(), &rw::rqw::MonitorZMotionIOStateThread::DIState,
-		uiModule._dlgProductSet, &DlgProductSet::monitorInPutSignal, Qt::QueuedConnection);
-	QObject::connect(motionControllerModule.monitorMotionIoStateThread.get(), &rw::rqw::MonitorZMotionIOStateThread::DOState,
-		uiModule._dlgProductSet, &DlgProductSet::monitorOutPutSignal, Qt::QueuedConnection);
 #pragma endregion
 
 #ifdef BUILD_WITHOUT_HARDWARE
