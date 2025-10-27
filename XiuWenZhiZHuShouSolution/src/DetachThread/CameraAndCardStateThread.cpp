@@ -7,7 +7,7 @@
 size_t CameraAndCardStateThreadHandleScanner::runtimeCounts=0;
 
 CameraAndCardStateThreadHandleScanner::CameraAndCardStateThreadHandleScanner(QObject* parent)
-	: QThread(parent), running(false), _dlgProductSet(Modules::getInstance().configManagerModule.setConfig){
+	: QThread(parent), running(false){
 }
 
 CameraAndCardStateThreadHandleScanner::~CameraAndCardStateThreadHandleScanner()
@@ -33,10 +33,8 @@ void CameraAndCardStateThreadHandleScanner::run()
 {
 	while (running) {
 		QThread::msleep(2000);
-		if (_dlgProductSet.yundongkongzhiqichonglian)
-		{
-			check_cardState();
-		}
+
+		check_cardState();
 
 		check_cameraState();
 
@@ -50,9 +48,6 @@ void CameraAndCardStateThreadHandleScanner::run()
 void CameraAndCardStateThreadHandleScanner::check_cameraState()
 {
 	check_cameraState1();
-	if (_dlgProductSet.qiyongerxiangji)
-	{
-	}
 }
 
 void CameraAndCardStateThreadHandleScanner::check_cameraState1()

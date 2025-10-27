@@ -97,7 +97,6 @@ public:
 	QString txtPath = projectHome + R"(txt\)";
 
 	QString HandleScannerConfigPath = configRootPath + R"(HandleScannerConfig.xml)";
-	QString DlgProductSetConfigPath = configRootPath + R"(DlgProductSetConfig.xml)";
 	QString modelPath = modelRootPath + R"(XiuWenZhiZHuShouSolution.engine)";
 	QString companyTxtPath = txtPath + R"(Company.txt)";
 	QString saveAddressTxtPath = txtPath + R"(SaveAddress.txt)";

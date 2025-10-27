@@ -27,11 +27,8 @@ public:
 	void stop() override;
 private:
 	bool build_camera1();
-	bool build_camera2();
 
 	void destroy_camera1();
-	void destroy_camera2();
-
 private:
 	std::vector<BuildError> _buildResults;
 public:
@@ -49,8 +46,6 @@ public slots:
 	void onFrameCaptured(rw::rqw::MatInfo frame, size_t index);
 signals:
 	void frameCaptured1(cv::Mat frame, size_t index);
-	void frameCaptured2(cv::Mat frame, size_t index);
 public:
 	std::unique_ptr<rw::rqw::CameraPassiveThread> camera1{ nullptr };
-	std::unique_ptr<rw::rqw::CameraPassiveThread> camera2{ nullptr };
 };

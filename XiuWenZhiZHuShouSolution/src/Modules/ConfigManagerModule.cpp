@@ -18,21 +18,12 @@ bool ConfigManagerModule::build()
 	}
 #pragma endregion
 
-#pragma region readsetCfg
-	loadMainWindowConfig = storeContext->loadSafe(globalPath.DlgProductSetConfigPath.toStdString());
-	if (loadMainWindowConfig)
-	{
-		setConfig = *loadMainWindowConfig;
-	}
-#pragma endregion
-
 	return true;
 }
 
 void ConfigManagerModule::destroy()
 {
 	storeContext->saveSafe(handleScannerConfig, globalPath.HandleScannerConfigPath.toStdString());
-	storeContext->saveSafe(setConfig, globalPath.DlgProductSetConfigPath.toStdString());
 	storeContext.reset();
 }
 

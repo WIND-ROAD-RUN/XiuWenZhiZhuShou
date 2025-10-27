@@ -3,7 +3,6 @@
 #include"IModule.hpp"
 #include<QObject>
 #include "oso_StorageContext.hpp"
-#include "SetConfig.hpp"
 #include "HandleScanner.hpp"
 
 class ConfigManagerModule
@@ -19,5 +18,4 @@ public:
 	std::unique_ptr<rw::oso::StorageContext> storeContext{ nullptr };
 public:
 	cdm::HandleScannerConfig handleScannerConfig{};
-	cdm::SetConfig setConfig{};
 };

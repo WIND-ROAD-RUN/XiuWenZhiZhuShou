@@ -22,10 +22,6 @@ std::vector<BuildError> CameraModule::build()
 	{
 		errorList.emplace_back(Camera1Error);
 	}
-	if (!build_camera2())
-	{
-		errorList.emplace_back(Camera2Error);
-	}
 	_buildResults = errorList;
 	return std::vector<BuildError>();
 }
@@ -33,7 +29,6 @@ std::vector<BuildError> CameraModule::build()
 void CameraModule::destroy()
 {
 	destroy_camera1();
-	destroy_camera2();
 }
 
 void CameraModule::start()
@@ -41,10 +36,6 @@ void CameraModule::start()
 	if (camera1)
 	{
 		camera1->startMonitor();
-	}
-	if (camera2)
-	{
-		camera2->startMonitor();
 	}
 }
 
@@ -54,21 +45,12 @@ void CameraModule::stop()
 	{
 		camera1->stopMonitor();
 	}
-	if (camera2)
-	{
-		camera2->stopMonitor();
-	}
 }
 
 bool CameraModule::build_camera1()
 {
-	auto& handleScannerConfig = Modules::getInstance().configManagerModule.handleScannerConfig;
-
 	auto cameraList = rw::rqw::CheckCameraList();
 	auto cameraMetaData1 = cameraMetaDataCheck(Utility::cameraIp1, cameraList);
-
-	auto& globalDataGeneralConfig = handleScannerConfig;
-	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 
 	if (cameraMetaData1.ip != "0")
 	{
@@ -83,21 +65,7 @@ bool CameraModule::build_camera1()
 			camera1->cameraIndex = 1;
 			camera1->setFrameRate(50);
 			camera1->setHeartbeatTime(5000);
-			if (globalDataGeneralConfig.isqiangguang)
-			{
-				camera1->setExposureTime(static_cast<size_t>(setConfig.qiangbaoguang));
-				camera1->setGain(static_cast<size_t>(setConfig.qiangzengyi));
-			}
-			else if (globalDataGeneralConfig.iszhongguang)
-			{
-				camera1->setExposureTime(static_cast<size_t>(setConfig.zhongbaoguang));
-				camera1->setGain(static_cast<size_t>(setConfig.zhongzengyi));
-			}
-			else if (globalDataGeneralConfig.isruoguang)
-			{
-				camera1->setExposureTime(static_cast<size_t>(setConfig.ruobaoguang));
-				camera1->setGain(static_cast<size_t>(setConfig.ruozengyi));
-			}
+
 			QObject::connect(camera1.get(), &rw::rqw::CameraPassiveThread::frameCaptured,
 				this, &CameraModule::onFrameCaptured);
 			return true;
@@ -111,62 +79,9 @@ bool CameraModule::build_camera1()
 	return false;
 }
 
-bool CameraModule::build_camera2()
-{
-	auto& handleScannerConfig = Modules::getInstance().configManagerModule.handleScannerConfig;
-
-	auto cameraList = rw::rqw::CheckCameraList();
-	auto cameraMetaData2 = cameraMetaDataCheck(Utility::cameraIp2, cameraList);
-	auto& globalDataGeneralConfig = handleScannerConfig;
-	auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
-	if (cameraMetaData2.ip != "0")
-	{
-		try
-		{
-			camera2 = std::make_unique<rw::rqw::CameraPassiveThread>(this);
-			// 相机触发回调
-			camera2->callBackForImgReadyBefore = [](rw::rqw::MatInfo& matInfo) {
-				};
-			camera2->initCamera(cameraMetaData2, rw::rqw::CameraObjectTrigger::Hardware);
-			camera2->setTriggerState(true);
-			camera2->cameraIndex = 2;
-			camera2->setFrameRate(50);
-			camera2->setHeartbeatTime(5000);
-			if (globalDataGeneralConfig.isqiangguang)
-			{
-				camera2->setExposureTime(static_cast<size_t>(setConfig.qiangbaoguang));
-				camera2->setGain(static_cast<size_t>(setConfig.qiangzengyi));
-			}
-			else if (globalDataGeneralConfig.iszhongguang)
-			{
-				camera2->setExposureTime(static_cast<size_t>(setConfig.zhongbaoguang));
-				camera2->setGain(static_cast<size_t>(setConfig.zhongzengyi));
-			}
-			else if (globalDataGeneralConfig.isruoguang)
-			{
-				camera2->setExposureTime(static_cast<size_t>(setConfig.ruobaoguang));
-				camera2->setGain(static_cast<size_t>(setConfig.ruozengyi));
-			}
-			QObject::connect(camera2.get(), &rw::rqw::CameraPassiveThread::frameCaptured,
-				this, &CameraModule::onFrameCaptured);
-			return true;
-		}
-		catch (const std::exception&)
-		{
-			return false;
-		}
-	}
-	return false;
-}
-
 void CameraModule::destroy_camera1()
 {
 	camera1.reset();
-}
-
-void CameraModule::destroy_camera2()
-{
-	camera2.reset();
 }
 
 bool CameraModule::isTargetCamera(const QString& cameraIndex, const QString& targetName)
@@ -202,8 +117,6 @@ bool CameraModule::onBuildCamera(int index)
 	{
 	case 1:
 		return build_camera1();
-	case 2:
-		return build_camera2();
 	default:
 		return false;
 	}
@@ -215,9 +128,6 @@ void CameraModule::onDestroyCamera(int index)
 	{
 	case 1:
 		destroy_camera1();
-		break;
-	case 2:
-		destroy_camera2();
 		break;
 	default:
 		break;
@@ -234,12 +144,6 @@ void CameraModule::onStartCamera(int index)
 			camera1->startMonitor();
 		}
 		break;
-	case 2:
-		if (camera2)
-		{
-			camera2->startMonitor();
-		}
-		break;
 	default:
 		break;
 	}
@@ -251,9 +155,6 @@ void CameraModule::onFrameCaptured(rw::rqw::MatInfo frame, size_t index)
 	{
 		case 1:
 			emit frameCaptured1(frame.mat, index);
-			break;
-		case 2:
-			emit frameCaptured2(frame.mat, index);
 			break;
 		default:
 			break;

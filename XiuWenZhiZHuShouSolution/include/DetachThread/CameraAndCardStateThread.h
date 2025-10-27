@@ -2,7 +2,6 @@
 #include <QThread>
 #include <QDebug>
 #include <atomic>
-#include "SetConfig.hpp"
 
 class CameraAndCardStateThreadHandleScanner : public QThread
 {
@@ -18,8 +17,6 @@ public:
 	void startThread();
 
 	void stopThread();
-
-	cdm::SetConfig& _dlgProductSet;
 
 protected:
 	void run() override;

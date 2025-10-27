@@ -11,8 +11,6 @@ bool MotionControllerModule::build()
 	isConnectMotion = isConnected;
 	if (isConnected)
 	{
-		auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
-
 		auto meizhuanmaichongshu = setConfig.meizhuanmaichongshu;
 		auto shedingzhouchang = setConfig.shedingzhouchang;
 		auto value = meizhuanmaichongshu / shedingzhouchang;

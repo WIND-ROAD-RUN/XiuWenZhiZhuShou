@@ -42,11 +42,8 @@ void ImgProModule::buildImgProContextMain()
 #pragma region  build base
 	imageProcessContext_Main.imageProcessPrepare = [this, &runningState, &handleScannerConfig](rw::imgPro::ImageProcessContext& context)
 		{
-
 			imageCenterX = 0;
 			bodyCount = 0;
-
-			auto& setConfig = Modules::getInstance().configManagerModule.setConfig;
 
 			if (context.customFields.find("ImgProcessIndex") == context.customFields.end()) {
 				return;
@@ -64,11 +61,7 @@ void ImgProModule::buildImgProContextMain()
 			{
 				if (1 == ImgProcessIndex)
 				{
-					currentPixToWorld = setConfig.xiangSuDangLiang1;
-				}
-				else if (2 == ImgProcessIndex)
-				{
-					currentPixToWorld = setConfig.xiangSuDangLiang2;
+					//currentPixToWorld = setConfig.xiangSuDangLiang1;
 				}
 				context.customFields["CurrentPixToWorld"] = static_cast<double>(currentPixToWorld);
 			}

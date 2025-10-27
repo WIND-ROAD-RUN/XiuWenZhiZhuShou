@@ -122,9 +122,6 @@ void Modules::connect()
 
 	QObject::connect(&cameraModule, &CameraModule::frameCaptured1,
 		imgProModule.imageProcessingModule1.get(), &ImageProcessingModuleHandleScanner::onFrameCaptured, Qt::DirectConnection);
-	QObject::connect(&cameraModule, &CameraModule::frameCaptured2,
-		imgProModule.imageProcessingModule2.get(), &ImageProcessingModuleHandleScanner::onFrameCaptured, Qt::DirectConnection);
-
 
 #pragma endregion
 
@@ -216,7 +213,6 @@ bool Modules::check()
 	rw::oso::StorageContext storageContext(rw::oso::StorageType::Xml);
 
 	checkFileExistAndFormat<cdm::HandleScannerConfig>(globalPath.HandleScannerConfigPath, storageContext);
-	checkFileExistAndFormat<cdm::SetConfig>(globalPath.DlgProductSetConfigPath, storageContext);
 #pragma endregion
 
 	return true;
