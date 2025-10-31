@@ -59,8 +59,6 @@ private:
 	int _workIndex;
 public:
 	int imageProcessingModuleIndex;
-
-	double pixToWorld{ 0 };
 };
 
 

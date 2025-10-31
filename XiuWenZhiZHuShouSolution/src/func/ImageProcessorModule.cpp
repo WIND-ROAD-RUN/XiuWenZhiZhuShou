@@ -113,6 +113,11 @@ void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
 	if (proResult.size() != 0)
 	{
 		auto body = proResult[0];
+		auto& mainWindowConfig = Modules::getInstance().configManagerModule.mainWindowConfig;
+
+		body.center_x = body.center_x * mainWindowConfig.xiangsudangliang;
+		body.center_y = body.center_y * mainWindowConfig.xiangsudangliang;
+
 		const auto timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
 		QString message{};
 		message += QString("[%1] ").arg(timestamp);
@@ -188,9 +193,9 @@ ImageProcessingModuleHandleScanner::~ImageProcessingModuleHandleScanner()
 void ImageProcessingModuleHandleScanner::onFrameCaptured(cv::Mat frame, size_t index)
 {
 	//手动读取本地图片
-	std::string imagePath = R"(C:\Users\zfkj4090\Desktop\xiuwenzhizhushouOBB\train\images\Image_20251024144247939.jpg)"; // 替换为你的图片路径
-	cv::Mat frame1 = cv::imread(imagePath, cv::IMREAD_COLOR);
-	frame = frame1.clone();
+	//std::string imagePath = R"(C:\Users\zfkj4090\Desktop\xiuwenzhizhushouOBB\train\images\Image_20251024144247939.jpg)"; // 替换为你的图片路径
+	//cv::Mat frame1 = cv::imread(imagePath, cv::IMREAD_COLOR);
+	//frame = frame1.clone();
 	if (frame.channels() == 4) {
 		cv::cvtColor(frame, frame, cv::COLOR_BGRA2BGR);
 	}
