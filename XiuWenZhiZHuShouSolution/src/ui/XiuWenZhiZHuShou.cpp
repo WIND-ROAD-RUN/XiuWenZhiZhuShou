@@ -266,8 +266,6 @@ void HandleScanner::rbtn_debug_checked(bool checked)
 	else {
 		ui->rbtn_debug->setChecked(false);
 	}
-
-	emit changeToDebugMode();
 }
 
 void HandleScanner::rbtn_removeFunc_checked(bool checked)
@@ -288,8 +286,6 @@ void HandleScanner::rbtn_removeFunc_checked(bool checked)
 	{
 		runningState = RunningState::Stop;
 	}
-
-	emit changeToRemoveMode();
 }
 
 void HandleScanner::btn_xiangsudangliang_clicked()

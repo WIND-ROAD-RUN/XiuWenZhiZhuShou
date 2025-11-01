@@ -49,8 +49,6 @@ private slots:
 	void btn_xiangsudangliang_clicked();
 
 signals:
-	void changeToDebugMode();
-	void changeToRemoveMode();
 private:
 	Ui::XiuWenZhiZHuShouClass* ui;
 	int minimizeCount{ 3 };

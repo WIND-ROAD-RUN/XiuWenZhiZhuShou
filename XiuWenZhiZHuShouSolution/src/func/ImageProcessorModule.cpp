@@ -87,15 +87,23 @@ void ImageProcessorHandleScanner::run_debug(MatInfo& frame)
 	if (proResult.size() != 0)
 	{
 		auto body = proResult[0];
-		const auto timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
-		QString message{};
-		message += QString("[%1] ").arg(timestamp);
-		message += QString("center_x:%1 ").arg(body.center_x);
-		message += QString("center_y:%1 ").arg(body.center_y);
-		message += QString("angle:%1 ").arg(body.angle);
-		Modules::getInstance().communicationModule.broadcastMessage(message);
+		auto& mainWindowConfig = Modules::getInstance().configManagerModule.mainWindowConfig;
 
-		emit updateMainWindowShowTXT(message);
+		body.center_x = body.center_x * mainWindowConfig.xiangsudangliang;
+		body.center_y = body.center_y * mainWindowConfig.xiangsudangliang;
+
+		QString payload;
+		payload += QString("center_x:%1 ").arg(body.center_x);
+		payload += QString("center_y:%1 ").arg(body.center_y);
+		payload += QString("angle:%1 ").arg(body.angle);
+
+		/*if (Modules::getInstance().communicationModule.isConnected()) {
+			Modules::getInstance().communicationModule.sendMessage(payload);
+		}*/
+
+		const auto timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
+		const QString uiMessage = QString("[%1] ").arg(timestamp) + payload;
+		emit updateMainWindowShowTXT(uiMessage);
 	}
 
 	emit imageNGReady(QPixmap::fromImage(maskImg), frame.index, defectResult.isBad);
@@ -118,15 +126,18 @@ void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
 		body.center_x = body.center_x * mainWindowConfig.xiangsudangliang;
 		body.center_y = body.center_y * mainWindowConfig.xiangsudangliang;
 
-		const auto timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
-		QString message{};
-		message += QString("[%1] ").arg(timestamp);
-		message += QString("center_x:%1 ").arg(body.center_x);
-		message += QString("center_y:%1 ").arg(body.center_y);
-		message += QString("angle:%1 ").arg(body.angle);
-		Modules::getInstance().communicationModule.broadcastMessage(message);
+		QString payload;
+		payload += QString("center_x:%1 ").arg(body.center_x);
+		payload += QString("center_y:%1 ").arg(body.center_y);
+		payload += QString("angle:%1 ").arg(body.angle);
 
-		emit updateMainWindowShowTXT(message);
+		if (Modules::getInstance().communicationModule.isConnected()) {
+			Modules::getInstance().communicationModule.sendMessage(payload);
+		}
+
+		const auto timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
+		const QString uiMessage = QString("[%1] ").arg(timestamp) + payload;
+		emit updateMainWindowShowTXT(uiMessage);
 	}
 
 	emit imageNGReady(QPixmap::fromImage(maskImg), frame.index, defectResult.isBad);
