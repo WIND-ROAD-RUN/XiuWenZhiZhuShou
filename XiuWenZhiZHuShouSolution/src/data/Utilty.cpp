@@ -1,6 +1,6 @@
 #include "Utilty.hpp"
 
-QString Utility::cameraIp1 = "1";
+QString Utility::cameraIp1 = "0";
 
 std::unordered_map<rw::imgPro::ClassId, rw::imgPro::ClassIdName> ClassId::classIdNameMap = {
 	{ClassId::body,"本体"}
