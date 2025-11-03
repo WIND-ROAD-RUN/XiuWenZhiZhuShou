@@ -18,33 +18,19 @@ public:
 	void start() override;
 	void stop() override;
 private slots:
-	void onConnected();
-	void onDisconnected();
-	void onReadyRead();
-	void errorOccurred();
+	void onNewConnection();
+	void onClientReadyRead();
+	void onClientDisconnected();
 signals:
 	void updateMainwindowUi(int cameraIndex, bool state);
 public:
-	// 客户端相关 API
-	void setServerAddress(const QString& host, quint16 port);
-	void setServerAddress(const QHostAddress& addr, quint16 port);
-	bool isConnected() const;
-
-	// 文本行协议（以 CRLF 结尾）
-	bool sendMessage(const QString& message);      // 发送 UTF-8 文本
-	bool sendBytes(const QByteArray& data);        // 发送原始字节
-
-	// 长度前缀帧协议（4 字节大端长度 + UTF-8 文本）
-	bool sendFramedMessage(const QString& message);
-
+	void sendMessageToClient(QTcpSocket* client, const QString& message);
+	void broadcastMessage(const QString& message);
+	bool sendMessageToClientByAddress(const QHostAddress& addr, quint16 port, const QString& message);
 private:
-	static QByteArray packFrame(const QByteArray& payload);
-private:
-	QTcpSocket* socket_{ nullptr };
-    QString hostName_;
-    QHostAddress hostAddr_;
-    quint16 port_{ 10000 };
-    bool useHostString_{ false }; // true 使用 hostName_，false 使用 hostAddr_
+	QTcpServer* tcpServer_{ nullptr };
+	QList<QPointer<QTcpSocket>> clients_;
+	QMutex clientsMutex_;
 };
 
 

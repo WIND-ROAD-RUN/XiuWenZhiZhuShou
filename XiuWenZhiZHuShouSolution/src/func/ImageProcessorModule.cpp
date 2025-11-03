@@ -97,9 +97,7 @@ void ImageProcessorHandleScanner::run_debug(MatInfo& frame)
 		payload += QString("center_y:%1 ").arg(body.center_y);
 		payload += QString("angle:%1 ").arg(body.angle);
 
-		/*if (Modules::getInstance().communicationModule.isConnected()) {
-			Modules::getInstance().communicationModule.sendMessage(payload);
-		}*/
+		//Modules::getInstance().communicationModule.broadcastMessage(payload);
 
 		const auto timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
 		const QString uiMessage = QString("[%1] ").arg(timestamp) + payload;
@@ -127,13 +125,23 @@ void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
 		body.center_y = body.center_y * mainWindowConfig.xiangsudangliang;
 
 		QString payload;
-		payload += QString("center_x:%1 ").arg(body.center_x);
-		payload += QString("center_y:%1 ").arg(body.center_y);
-		payload += QString("angle:%1 ").arg(body.angle);
+		payload += QString("Image\n");
 
-		if (Modules::getInstance().communicationModule.isConnected()) {
-			Modules::getInstance().communicationModule.sendMessage(payload);
+		for (size_t i = 0; i < proResult.size(); ++i) {
+			auto body = proResult[i]; // 局部拷贝，后面可安全修改
+			body.center_x = body.center_x * mainWindowConfig.xiangsudangliang;
+			body.center_y = body.center_y * mainWindowConfig.xiangsudangliang;
+
+			payload += QString("[X:%1;").arg(body.center_x);
+			payload += QString("Y:%1;").arg(body.center_y);
+			payload += QString("A:%1;").arg(body.angle);
+			payload += QString("ATTR:0;");
+			payload += QString("ID:0]\n"); // ID 用索引标识
 		}
+		
+		payload += QString("Done\n");
+
+		Modules::getInstance().communicationModule.broadcastMessage(payload);
 
 		const auto timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
 		const QString uiMessage = QString("[%1] ").arg(timestamp) + payload;

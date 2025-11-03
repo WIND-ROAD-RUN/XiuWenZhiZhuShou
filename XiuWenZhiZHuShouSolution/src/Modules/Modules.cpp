@@ -21,7 +21,6 @@ bool Modules::build()
 	auto configManagerBuild = configManagerModule.build();
 
 	auto communciationModule = communicationModule.build();
-	communicationModule.setServerAddress("192.168.1.67", 10000);
 
 	// 构建相机
 	auto cameraBuild = cameraModule.build();
