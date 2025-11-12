@@ -31,5 +31,6 @@ public:
 	QString modelPath = modelRootPath + R"(XiuWenZhiZHuShouSolution.engine)";
 	QString companyTxtPath = txtPath + R"(Company.txt)";
 public:
+	QString imageSaveRootPath = projectHome + R"(SavedImages\)";
 	QString testImgDirPath = R"(D:\zfkjDevelopment\ImgStorage\zhizhushou)";
 }globalPath;

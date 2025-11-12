@@ -21,6 +21,7 @@ namespace cdm {
     public:
         bool isDebug{ false };
         bool isDefect{ false };
+        bool isSaveImg{ false };
         double xiangsudangliang{ 0.0 };
         double xiandingtiji{ 0.0 };
     };
@@ -42,6 +43,11 @@ namespace cdm {
             throw std::runtime_error("$variable$isDefect is not found");
         }
         isDefect = isDefectItem->getValueAsBool();
+        auto isSaveImgItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$isSaveImg$"));
+        if (!isSaveImgItem) {
+            throw std::runtime_error("$variable$isSaveImg is not found");
+        }
+        isSaveImg = isSaveImgItem->getValueAsBool();
         auto xiangsudangliangItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$xiangsudangliang$"));
         if (!xiangsudangliangItem) {
             throw std::runtime_error("$variable$xiangsudangliang is not found");
@@ -58,6 +64,7 @@ namespace cdm {
     {
         isDebug = obj.isDebug;
         isDefect = obj.isDefect;
+        isSaveImg = obj.isSaveImg;
         xiangsudangliang = obj.xiangsudangliang;
         xiandingtiji = obj.xiandingtiji;
     }
@@ -67,6 +74,7 @@ namespace cdm {
         if (this != &obj) {
             isDebug = obj.isDebug;
             isDefect = obj.isDefect;
+            isSaveImg = obj.isSaveImg;
             xiangsudangliang = obj.xiangsudangliang;
             xiandingtiji = obj.xiandingtiji;
         }
@@ -85,6 +93,10 @@ namespace cdm {
         isDefectItem->setName("$variable$isDefect$");
         isDefectItem->setValueFromBool(isDefect);
         assembly.addItem(isDefectItem);
+        auto isSaveImgItem = std::make_shared<rw::oso::ObjectStoreItem>();
+        isSaveImgItem->setName("$variable$isSaveImg$");
+        isSaveImgItem->setValueFromBool(isSaveImg);
+        assembly.addItem(isSaveImgItem);
         auto xiangsudangliangItem = std::make_shared<rw::oso::ObjectStoreItem>();
         xiangsudangliangItem->setName("$variable$xiangsudangliang$");
         xiangsudangliangItem->setValueFromDouble(xiangsudangliang);
@@ -98,7 +110,7 @@ namespace cdm {
 
     inline bool MainWindowConfig::operator==(const MainWindowConfig& obj) const
     {
-        return isDebug == obj.isDebug && isDefect == obj.isDefect && xiangsudangliang == obj.xiangsudangliang && xiandingtiji == obj.xiandingtiji;
+        return isDebug == obj.isDebug && isDefect == obj.isDefect && isSaveImg == obj.isSaveImg && xiangsudangliang == obj.xiangsudangliang && xiandingtiji == obj.xiandingtiji;
     }
 
     inline bool MainWindowConfig::operator!=(const MainWindowConfig& obj) const

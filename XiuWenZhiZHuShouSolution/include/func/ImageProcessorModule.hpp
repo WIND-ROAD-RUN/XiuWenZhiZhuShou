@@ -39,6 +39,11 @@ private:
 private:
 	void run_OpenRemoveFunc(MatInfo& frame);
 
+private:
+	// 存图
+	void save_image(rw::rqw::ImageInfo& imageInfo, const QImage& image);
+	void save_image_work(rw::rqw::ImageInfo& imageInfo, const QImage& image);
+
 signals:
 	void imageNGReady(QPixmap image, size_t index, bool isbad);
 

@@ -12,6 +12,7 @@
 #include "rqw_RunEnvCheck.hpp"
 #include "TestModule.hpp"
 #include"CommunicationModule.hpp"
+#include "ImgSaveModule.hpp"
 
 class Modules
 	:public IModule<bool>
@@ -53,6 +54,7 @@ public:
 	UIModule uiModule;
 	ReconnectModule reconnectModule;
 	CommunicationModule communicationModule;
+	ImgSaveModule imgSaveModule;
 
 
 #ifdef BUILD_WITHOUT_HARDWARE

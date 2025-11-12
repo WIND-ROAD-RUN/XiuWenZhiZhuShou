@@ -162,6 +162,25 @@ void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
 	}
 
 	emit imageNGReady(QPixmap::fromImage(maskImg), frame.index, defectResult.isBad);
+
+	rw::rqw::ImageInfo imageInfo(maskImg);
+
+	save_image(imageInfo, rw::rqw::cvMatToQImage(frame.image));
+}
+
+void ImageProcessorHandleScanner::save_image(rw::rqw::ImageInfo& imageInfo, const QImage& image)
+{
+	save_image_work(imageInfo, image);
+}
+
+void ImageProcessorHandleScanner::save_image_work(rw::rqw::ImageInfo& imageInfo, const QImage& image)
+{
+	auto& imageSaveEngine = Modules::getInstance().imgSaveModule.imageSaveEngine;
+
+	rw::rqw::ImageInfo Ok(image);
+	Ok.classify = "OK";
+	imageSaveEngine->pushImage(Ok);
+
 }
 
 void ImageProcessorHandleScanner::buildDetModelEngine(const QString& enginePath)

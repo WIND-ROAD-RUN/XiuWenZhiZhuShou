@@ -64,6 +64,7 @@ void HandleScanner::build_connect()
 	connect(ui->pbtn_exit, &QPushButton::clicked, this, &HandleScanner::pbtn_exit_clicked);
 	connect(ui->rbtn_debug, &QRadioButton::toggled, this, &HandleScanner::rbtn_debug_checked);
 	connect(ui->rbtn_removeFunc, &QRadioButton::toggled, this, &HandleScanner::rbtn_removeFunc_checked);
+	connect(ui->rbtn_saveImg, &QRadioButton::toggled, this, &HandleScanner::rbtn_saveImg_checked);
 	connect(ui->btn_xiangsudangliang, &QPushButton::clicked, this, &HandleScanner::btn_xiangsudangliang_clicked);
 	connect(ui->btn_xiandingtiji, &QPushButton::clicked, this, &HandleScanner::btn_xiandingtiji_clicked);
 	
@@ -81,6 +82,7 @@ void HandleScanner::build_HandleScannerData()
 	rbtn_removeFunc_checked(true);
 
 	ui->rbtn_removeFunc->setChecked(mainWindowConfig.isDefect);
+	ui->rbtn_saveImg->setChecked(mainWindowConfig.isSaveImg);
 	ui->btn_xiangsudangliang->setText(QString::number(mainWindowConfig.xiangsudangliang));
 	ui->btn_xiandingtiji->setText(QString::number(mainWindowConfig.xiandingtiji));
 
@@ -288,6 +290,12 @@ void HandleScanner::rbtn_removeFunc_checked(bool checked)
 	{
 		runningState = RunningState::Stop;
 	}
+}
+
+void HandleScanner::rbtn_saveImg_checked(bool checked)
+{
+	auto& mainWindowConfig = Modules::getInstance().configManagerModule.mainWindowConfig;
+	mainWindowConfig.isSaveImg = checked;
 }
 
 void HandleScanner::btn_xiangsudangliang_clicked()

@@ -46,6 +46,7 @@ private slots:
 	void pbtn_exit_clicked();
 	void rbtn_debug_checked(bool checked);
 	void rbtn_removeFunc_checked(bool checked);
+	void rbtn_saveImg_checked(bool checked);
 	void btn_xiangsudangliang_clicked();
 	void btn_xiandingtiji_clicked();
 

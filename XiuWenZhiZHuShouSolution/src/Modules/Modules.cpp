@@ -37,6 +37,9 @@ bool Modules::build()
 	// 构建重连模块
 	reconnectModule.build();
 
+	// 构建存图模块
+	imgSaveModule.build();
+
 #ifdef BUILD_WITHOUT_HARDWARE
 	test_module.build();
 #endif
@@ -52,6 +55,7 @@ void Modules::destroy()
 #ifdef BUILD_WITHOUT_HARDWARE
 	test_module.destroy();
 #endif
+	imgSaveModule.destroy();
 	runtimeInfoModule.destroy();
 	imgProModule.destroy();
 	cameraModule.destroy();
@@ -70,7 +74,7 @@ void Modules::start()
 	imgProModule.start();
 	cameraModule.start();
 	reconnectModule.start();
-
+	imgSaveModule.start();
 
 #ifdef BUILD_WITHOUT_HARDWARE
 	test_module.start();
@@ -82,6 +86,7 @@ void Modules::stop()
 #ifdef BUILD_WITHOUT_HARDWARE
 	test_module.stop();
 #endif
+	imgSaveModule.stop();
 	reconnectModule.stop();
 	cameraModule.stop();
 	imgProModule.stop();
@@ -137,7 +142,7 @@ void Modules::connect()
 bool Modules::check()
 {
 #pragma region check single instance
-	if (!rw::rqw::RunEnvCheck::isSingleInstance("HandleScanner.exe"))
+	if (!rw::rqw::RunEnvCheck::isSingleInstance("XiuWenZhiZHuShou.exe"))
 	{
 		QMessageBox::warning(nullptr, "错误", "已经有程序在运行，请勿多次打开");
 		return false;
@@ -164,6 +169,7 @@ bool Modules::check()
 	EnsureDirectoryExists(globalPath.configRootPath);
 	EnsureDirectoryExists(globalPath.modelRootPath);
 	EnsureDirectoryExists(globalPath.txtPath);
+	EnsureDirectoryExists(globalPath.imageSaveRootPath);
 #pragma endregion
 
 #pragma region check model exist
