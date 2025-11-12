@@ -7,5 +7,6 @@ namespace cdm {
 		isDebug : bool :default = false;
 		isDefect : bool :default = false;
 		xiangsudangliang : double :default = 0.0;
+		xiandingtiji : double :default = 0.0;
 	};
 }

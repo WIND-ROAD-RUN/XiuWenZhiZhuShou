@@ -22,6 +22,7 @@ namespace cdm {
         bool isDebug{ false };
         bool isDefect{ false };
         double xiangsudangliang{ 0.0 };
+        double xiandingtiji{ 0.0 };
     };
 
     inline MainWindowConfig::MainWindowConfig(const rw::oso::ObjectStoreAssembly& assembly)
@@ -46,6 +47,11 @@ namespace cdm {
             throw std::runtime_error("$variable$xiangsudangliang is not found");
         }
         xiangsudangliang = xiangsudangliangItem->getValueAsDouble();
+        auto xiandingtijiItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$xiandingtiji$"));
+        if (!xiandingtijiItem) {
+            throw std::runtime_error("$variable$xiandingtiji is not found");
+        }
+        xiandingtiji = xiandingtijiItem->getValueAsDouble();
     }
 
     inline MainWindowConfig::MainWindowConfig(const MainWindowConfig& obj)
@@ -53,6 +59,7 @@ namespace cdm {
         isDebug = obj.isDebug;
         isDefect = obj.isDefect;
         xiangsudangliang = obj.xiangsudangliang;
+        xiandingtiji = obj.xiandingtiji;
     }
 
     inline MainWindowConfig& MainWindowConfig::operator=(const MainWindowConfig& obj)
@@ -61,6 +68,7 @@ namespace cdm {
             isDebug = obj.isDebug;
             isDefect = obj.isDefect;
             xiangsudangliang = obj.xiangsudangliang;
+            xiandingtiji = obj.xiandingtiji;
         }
         return *this;
     }
@@ -81,12 +89,16 @@ namespace cdm {
         xiangsudangliangItem->setName("$variable$xiangsudangliang$");
         xiangsudangliangItem->setValueFromDouble(xiangsudangliang);
         assembly.addItem(xiangsudangliangItem);
+        auto xiandingtijiItem = std::make_shared<rw::oso::ObjectStoreItem>();
+        xiandingtijiItem->setName("$variable$xiandingtiji$");
+        xiandingtijiItem->setValueFromDouble(xiandingtiji);
+        assembly.addItem(xiandingtijiItem);
         return assembly;
     }
 
     inline bool MainWindowConfig::operator==(const MainWindowConfig& obj) const
     {
-        return isDebug == obj.isDebug && isDefect == obj.isDefect && xiangsudangliang == obj.xiangsudangliang;
+        return isDebug == obj.isDebug && isDefect == obj.isDefect && xiangsudangliang == obj.xiangsudangliang && xiandingtiji == obj.xiandingtiji;
     }
 
     inline bool MainWindowConfig::operator!=(const MainWindowConfig& obj) const

@@ -65,6 +65,7 @@ void HandleScanner::build_connect()
 	connect(ui->rbtn_debug, &QRadioButton::toggled, this, &HandleScanner::rbtn_debug_checked);
 	connect(ui->rbtn_removeFunc, &QRadioButton::toggled, this, &HandleScanner::rbtn_removeFunc_checked);
 	connect(ui->btn_xiangsudangliang, &QPushButton::clicked, this, &HandleScanner::btn_xiangsudangliang_clicked);
+	connect(ui->btn_xiandingtiji, &QPushButton::clicked, this, &HandleScanner::btn_xiandingtiji_clicked);
 	
 	// 连接显示标题
 	QObject::connect(clickableTitle, &rw::rqw::ClickableLabel::clicked,
@@ -81,6 +82,7 @@ void HandleScanner::build_HandleScannerData()
 
 	ui->rbtn_removeFunc->setChecked(mainWindowConfig.isDefect);
 	ui->btn_xiangsudangliang->setText(QString::number(mainWindowConfig.xiangsudangliang));
+	ui->btn_xiandingtiji->setText(QString::number(mainWindowConfig.xiandingtiji));
 
 	// 初始化关闭窗体
 	_dlgCloseForm = new DlgCloseForm(this);
@@ -304,5 +306,24 @@ void HandleScanner::btn_xiangsudangliang_clicked()
 		auto& generalConfig = Modules::getInstance().configManagerModule.mainWindowConfig;
 		ui->btn_xiangsudangliang->setText(value);
 		generalConfig.xiangsudangliang = value.toDouble();
+	}
+}
+
+void HandleScanner::btn_xiandingtiji_clicked()
+{
+	NumberKeyboard numKeyBord;
+	numKeyBord.setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
+	auto isAccept = numKeyBord.exec();
+	if (isAccept == QDialog::Accepted)
+	{
+		auto value = numKeyBord.getValue();
+		if (value.toDouble() < 0)
+		{
+			QMessageBox::warning(this, "提示", "请输入大于0的数值");
+			return;
+		}
+		auto& generalConfig = Modules::getInstance().configManagerModule.mainWindowConfig;
+		ui->btn_xiandingtiji->setText(value);
+		generalConfig.xiandingtiji = value.toDouble();
 	}
 }

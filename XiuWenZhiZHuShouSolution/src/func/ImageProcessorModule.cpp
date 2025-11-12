@@ -118,34 +118,47 @@ void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
 
 	if (proResult.size() != 0)
 	{
-		auto body = proResult[0];
 		auto& mainWindowConfig = Modules::getInstance().configManagerModule.mainWindowConfig;
 
-		body.center_x = body.center_x * mainWindowConfig.xiangsudangliang;
-		body.center_y = body.center_y * mainWindowConfig.xiangsudangliang;
-
 		QString payload;
-		payload += QString("Image\n");
+		bool hasValidData = false;
 
 		for (size_t i = 0; i < proResult.size(); ++i) {
-			auto body = proResult[i]; // 局部拷贝，后面可安全修改
-			body.center_x = body.center_x * mainWindowConfig.xiangsudangliang;
-			body.center_y = body.center_y * mainWindowConfig.xiangsudangliang;
+			auto body = proResult[i];
+			auto& xiangsudangliang = mainWindowConfig.xiangsudangliang;
+			body.center_x = body.center_x * xiangsudangliang;
+			body.center_y = body.center_y * xiangsudangliang;
+
+			auto area = body.area * xiangsudangliang * xiangsudangliang;
+
+			if (area < mainWindowConfig.xiandingtiji)
+			{
+				break;
+			}
+
+			if (!hasValidData)
+			{
+				payload += QString("Image\n");
+				hasValidData = true;
+			}
 
 			payload += QString("[X:%1;").arg(body.center_x);
 			payload += QString("Y:%1;").arg(body.center_y);
 			payload += QString("A:%1;").arg(body.angle);
 			payload += QString("ATTR:0;");
-			payload += QString("ID:0]\n"); // ID 用索引标识
+			payload += QString("ID:0]\n");
 		}
-		
-		payload += QString("Done\n");
 
-		Modules::getInstance().communicationModule.broadcastMessage(payload);
+		if (hasValidData)
+		{
+			payload += QString("Done\n");
 
-		const auto timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
-		const QString uiMessage = QString("[%1] ").arg(timestamp) + payload;
-		emit updateMainWindowShowTXT(uiMessage);
+			Modules::getInstance().communicationModule.broadcastMessage(payload);
+
+			const auto timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
+			const QString uiMessage = QString("[%1] ").arg(timestamp) + payload;
+			emit updateMainWindowShowTXT(uiMessage);
+		}
 	}
 
 	emit imageNGReady(QPixmap::fromImage(maskImg), frame.index, defectResult.isBad);

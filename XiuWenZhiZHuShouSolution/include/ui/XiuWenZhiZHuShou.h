@@ -47,6 +47,7 @@ private slots:
 	void rbtn_debug_checked(bool checked);
 	void rbtn_removeFunc_checked(bool checked);
 	void btn_xiangsudangliang_clicked();
+	void btn_xiandingtiji_clicked();
 
 signals:
 private:
