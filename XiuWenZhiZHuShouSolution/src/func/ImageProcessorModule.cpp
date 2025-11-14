@@ -131,7 +131,7 @@ void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
 
 			auto area = body.area * xiangsudangliang * xiangsudangliang;
 
-			if (area < mainWindowConfig.xiandingtiji)
+			if (area < mainWindowConfig.xiandingtiji * 100)
 			{
 				break;
 			}
@@ -144,7 +144,7 @@ void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
 
 			payload += QString("[X:%1;").arg(body.center_x);
 			payload += QString("Y:%1;").arg(body.center_y);
-			payload += QString("A:%1;").arg(body.angle);
+			payload += QString("A:%1;").arg(body.angle * 360);
 			payload += QString("ATTR:0;");
 			payload += QString("ID:0]\n");
 		}
