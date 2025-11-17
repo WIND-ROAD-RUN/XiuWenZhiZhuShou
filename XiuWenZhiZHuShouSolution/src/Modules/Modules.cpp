@@ -31,14 +31,14 @@ bool Modules::build()
 	// 构建图像处理模块
 	auto imgProModuleBuild = imgProModule.build();
 
+	// 构建存图模块
+	imgSaveModule.build();
+
 	// 构建UI模块
 	uiModule.build();
 
 	// 构建重连模块
 	reconnectModule.build();
-
-	// 构建存图模块
-	imgSaveModule.build();
 
 #ifdef BUILD_WITHOUT_HARDWARE
 	test_module.build();
@@ -55,8 +55,8 @@ void Modules::destroy()
 #ifdef BUILD_WITHOUT_HARDWARE
 	test_module.destroy();
 #endif
-	imgSaveModule.destroy();
 	runtimeInfoModule.destroy();
+	imgSaveModule.destroy();
 	imgProModule.destroy();
 	cameraModule.destroy();
 	configManagerModule.destroy();
@@ -72,9 +72,9 @@ void Modules::start()
 	communicationModule.start();
 	runtimeInfoModule.start();
 	imgProModule.start();
+	imgSaveModule.start();
 	cameraModule.start();
 	reconnectModule.start();
-	imgSaveModule.start();
 
 #ifdef BUILD_WITHOUT_HARDWARE
 	test_module.start();
@@ -86,9 +86,9 @@ void Modules::stop()
 #ifdef BUILD_WITHOUT_HARDWARE
 	test_module.stop();
 #endif
-	imgSaveModule.stop();
 	reconnectModule.stop();
 	cameraModule.stop();
+	imgSaveModule.stop();
 	imgProModule.stop();
 	runtimeInfoModule.stop();
 	configManagerModule.stop();
