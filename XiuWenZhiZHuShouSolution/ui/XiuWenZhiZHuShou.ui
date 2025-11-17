@@ -444,7 +444,7 @@ QPushButton:pressed {
     }</string>
                </property>
                <property name="text">
-                <string>限定体积</string>
+                <string>限定面积</string>
                </property>
               </widget>
              </item>
@@ -477,6 +477,22 @@ QPushButton:pressed {
                </property>
                <property name="text">
                 <string>Value</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_3">
+               <property name="styleSheet">
+                <string notr="true">QLabel {
+       font-size: 20px;        
+       font-weight: bold;        
+       color:  rgb(141, 141, 141);       
+       padding: 5px 5px;     
+       border-bottom: 2px solid #cccccc; 
+    }</string>
+               </property>
+               <property name="text">
+                <string>cm²</string>
                </property>
               </widget>
              </item>
