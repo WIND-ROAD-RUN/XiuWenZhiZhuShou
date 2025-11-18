@@ -13,19 +13,27 @@ bool CommunicationModule::build()
 
 void CommunicationModule::destroy()
 {
-	QMutexLocker locker(&clientsMutex_);
-	for (auto sock : clients_) {
-		if (sock) {
-			sock->disconnectFromHost();
-			sock->deleteLater();
-		}
-	}
-	clients_.clear();
-
+	// 先停止服务器接受新连接
 	if (tcpServer_) {
 		tcpServer_->close();
-		tcpServer_->deleteLater();
+		delete tcpServer_;
 		tcpServer_ = nullptr;
+	}
+
+	// 强制断开所有客户端连接
+	{
+		QMutexLocker locker(&clientsMutex_);
+		for (auto sock : clients_) {
+			if (sock) {
+				// 先断开所有信号连接,防止触发槽函数
+				QObject::disconnect(sock, nullptr, this, nullptr);
+				// 使用 abort() 立即关闭连接
+				sock->abort();
+				// 直接删除,不使用 deleteLater
+				delete sock;
+			}
+		}
+		clients_.clear();
 	}
 }
 
@@ -58,7 +66,10 @@ void CommunicationModule::stop()
 	QMutexLocker locker(&clientsMutex_);
 	for (auto sock : clients_) {
 		if (sock) {
-			sock->disconnectFromHost();
+			// 先断开信号连接,防止 abort() 触发槽函数导致死锁
+			QObject::disconnect(sock, nullptr, this, nullptr);
+			// 中止连接而不是优雅关闭
+			sock->abort();
 		}
 	}
 }
@@ -114,7 +125,7 @@ void CommunicationModule::onClientDisconnected()
 		clients_.removeAll(client);
 	}
 
-	emit updateMainwindowUi(0, false);
+	//emit updateMainwindowUi(0, false);
 
 
 	client->deleteLater();

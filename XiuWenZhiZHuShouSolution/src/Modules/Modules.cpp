@@ -59,10 +59,10 @@ void Modules::destroy()
 	imgSaveModule.destroy();
 	imgProModule.destroy();
 	cameraModule.destroy();
+	communicationModule.destroy();
 	configManagerModule.destroy();
 	uiModule.destroy();
 	reconnectModule.destroy();
-	communicationModule.destroy();
 }
 
 void Modules::start()
@@ -91,9 +91,9 @@ void Modules::stop()
 	imgSaveModule.stop();
 	imgProModule.stop();
 	runtimeInfoModule.stop();
+	communicationModule.stop();
 	configManagerModule.stop();
 	uiModule.stop();
-	communicationModule.stop();
 }
 
 void Modules::connect()
