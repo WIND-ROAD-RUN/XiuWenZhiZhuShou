@@ -86,25 +86,53 @@ void ImageProcessorHandleScanner::run_debug(MatInfo& frame)
 
 	if (proResult.size() != 0)
 	{
-		auto body = proResult[0];
 		auto& mainWindowConfig = Modules::getInstance().configManagerModule.mainWindowConfig;
 
-		body.center_x = body.center_x * mainWindowConfig.xiangsudangliang;
-		body.center_y = body.center_y * mainWindowConfig.xiangsudangliang;
-
 		QString payload;
-		payload += QString("center_x:%1 ").arg(body.center_x);
-		payload += QString("center_y:%1 ").arg(body.center_y);
-		payload += QString("angle:%1 ").arg(body.angle);
+		bool hasValidData = false;
 
-		//Modules::getInstance().communicationModule.broadcastMessage(payload);
+		for (size_t i = 0; i < proResult.size(); ++i) {
+			auto body = proResult[i];
+			auto& xiangsudangliang = mainWindowConfig.xiangsudangliang;
+			body.center_x = body.center_x * xiangsudangliang;
+			body.center_y = body.center_y * xiangsudangliang;
 
-		const auto timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
-		const QString uiMessage = QString("[%1] ").arg(timestamp) + payload;
-		emit updateMainWindowShowTXT(uiMessage);
+			auto area = body.area * xiangsudangliang * xiangsudangliang;
+
+			if (area < mainWindowConfig.xiandingtiji * 100)
+			{
+				break;
+			}
+
+			if (!hasValidData)
+			{
+				payload += QString("Image\n");
+				hasValidData = true;
+			}
+
+			payload += QString("[X:%1;").arg(body.center_x);
+			payload += QString("Y:%1;").arg(body.center_y);
+			payload += QString("A:%1;").arg(body.angle * 360);
+			payload += QString("ATTR:0;");
+			payload += QString("ID:0]\n");
+		}
+
+		if (hasValidData)
+		{
+			payload += QString("Done\n");
+
+			Modules::getInstance().communicationModule.broadcastMessage(payload);
+
+			const auto timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
+			const QString uiMessage = QString("[%1] ").arg(timestamp) + payload;
+			emit updateMainWindowShowTXT(uiMessage);
+		}
 	}
-
 	emit imageNGReady(QPixmap::fromImage(maskImg), frame.index, defectResult.isBad);
+
+	rw::rqw::ImageInfo imageInfo(maskImg);
+
+	save_image(imageInfo, rw::rqw::cvMatToQImage(frame.image));
 }
 
 void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
