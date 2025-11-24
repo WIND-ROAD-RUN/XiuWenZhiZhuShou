@@ -233,6 +233,16 @@ void HandleScanner::appendTcpLog(const QString text)
 			Qt::AutoConnection,
 			Q_ARG(QString, text)
 		);
+
+		// 滚动到底部
+		QMetaObject::invokeMethod(
+			ui->plainTextEdit_communication,
+			[this]() {
+				QScrollBar* scrollBar = ui->plainTextEdit_communication->verticalScrollBar();
+				scrollBar->setValue(scrollBar->maximum());
+			},
+			Qt::QueuedConnection
+		);
 	}
 }
 
