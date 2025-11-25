@@ -2,6 +2,8 @@
 #include "Modules.hpp"
 #include "Utilty.hpp"
 #include <QDateTime>
+#include <QFileInfo>
+#include <QDir>
 
 bool is_inner(const rw::DetectionRectangleInfo& info, int imgCentralX, int imgIndex)
 {
@@ -78,6 +80,43 @@ void ImageProcessorHandleScanner::run()
 void ImageProcessorHandleScanner::run_debug(MatInfo& frame)
 {
 	auto& imgPro = *_imgProcess;
+
+	// 构建临时调试图片存储路径
+	QString tempDir = "D:\\zfkjData\\XiuWenZhiZHuShouSolution\\TempDebugImages";
+	QDir dir(tempDir);
+	if (!dir.exists())
+	{
+		dir.mkpath(tempDir);  // 创建目录(如果不存在)
+	}
+
+	// 使用固定文件名，每次覆盖，避免文件积累
+	QString tempImagePath = QString("%1\\Debug_Worker_%2.jpg")
+		.arg(tempDir)
+		.arg(_workIndex);
+
+	// 保存原始图片
+	bool saveSuccess = cv::imwrite(tempImagePath.toStdString(), frame.image);
+	if (saveSuccess)
+	{
+		//qDebug() << "Debug image saved to:" << tempImagePath;
+
+		// 立即读取验证
+		cv::Mat reloadedImage = cv::imread(tempImagePath.toStdString(), cv::IMREAD_COLOR);
+		if (!reloadedImage.empty())
+		{
+			//qDebug() << "Successfully reloaded image, size:" << reloadedImage.rows << "x" << reloadedImage.cols;
+			frame.image = reloadedImage.clone();
+		}
+		else
+		{
+			//qWarning() << "Failed to reload image from:" << tempImagePath;
+		}
+	}
+	else
+	{
+		//qWarning() << "Failed to save debug image to:" << tempImagePath;
+	}
+
 	imgPro(frame.image);
 
 	auto maskImg = imgPro.getMaskImg(frame.image);
@@ -130,14 +169,51 @@ void ImageProcessorHandleScanner::run_debug(MatInfo& frame)
 	}
 	emit imageNGReady(QPixmap::fromImage(maskImg), frame.index, defectResult.isBad);
 
-	rw::rqw::ImageInfo imageInfo(maskImg);
+	/*rw::rqw::ImageInfo imageInfo(rw::rqw::cvMatToQImage(frame.image));
 
-	save_image(imageInfo, rw::rqw::cvMatToQImage(frame.image));
+	save_image(imageInfo, rw::rqw::cvMatToQImage(frame.image));*/
 }
 
 void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
 {
 	auto& imgPro = *_imgProcess;
+
+	// 构建临时调试图片存储路径
+	QString tempDir = "D:\\zfkjData\\XiuWenZhiZHuShouSolution\\TempDebugImages";
+	QDir dir(tempDir);
+	if (!dir.exists())
+	{
+		dir.mkpath(tempDir);  // 创建目录(如果不存在)
+	}
+
+	// 使用固定文件名，每次覆盖，避免文件积累
+	QString tempImagePath = QString("%1\\Debug_Worker_%2.jpg")
+		.arg(tempDir)
+		.arg(_workIndex);
+
+	// 保存原始图片
+	bool saveSuccess = cv::imwrite(tempImagePath.toStdString(), frame.image);
+	if (saveSuccess)
+	{
+		//qDebug() << "Debug image saved to:" << tempImagePath;
+
+		// 立即读取验证
+		cv::Mat reloadedImage = cv::imread(tempImagePath.toStdString(), cv::IMREAD_COLOR);
+		if (!reloadedImage.empty())
+		{
+			//qDebug() << "Successfully reloaded image, size:" << reloadedImage.rows << "x" << reloadedImage.cols;
+			frame.image = reloadedImage.clone();
+		}
+		else
+		{
+			//qWarning() << "Failed to reload image from:" << tempImagePath;
+		}
+	}
+	else
+	{
+		//qWarning() << "Failed to save debug image to:" << tempImagePath;
+	}
+
 	imgPro(frame.image);
 
 	auto maskImg = imgPro.getMaskImg(frame.image);
@@ -191,14 +267,18 @@ void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
 
 	emit imageNGReady(QPixmap::fromImage(maskImg), frame.index, defectResult.isBad);
 
-	rw::rqw::ImageInfo imageInfo(maskImg);
+	/*rw::rqw::ImageInfo imageInfo(maskImg);
 
-	save_image(imageInfo, rw::rqw::cvMatToQImage(frame.image));
+	save_image(imageInfo, rw::rqw::cvMatToQImage(frame.image));*/
 }
 
 void ImageProcessorHandleScanner::save_image(rw::rqw::ImageInfo& imageInfo, const QImage& image)
 {
-	save_image_work(imageInfo, image);
+	auto& mainWindowConfig = Modules::getInstance().configManagerModule.mainWindowConfig;
+	if (mainWindowConfig.isSaveImg)
+	{
+		save_image_work(imageInfo, image);
+	}
 }
 
 void ImageProcessorHandleScanner::save_image_work(rw::rqw::ImageInfo& imageInfo, const QImage& image)
@@ -208,7 +288,6 @@ void ImageProcessorHandleScanner::save_image_work(rw::rqw::ImageInfo& imageInfo,
 	rw::rqw::ImageInfo Ok(image);
 	Ok.classify = "OK";
 	imageSaveEngine->pushImage(Ok);
-
 }
 
 void ImageProcessorHandleScanner::buildDetModelEngine(const QString& enginePath)

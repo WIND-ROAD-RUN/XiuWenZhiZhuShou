@@ -57,6 +57,8 @@ private:
 	// 判断是否有缺陷
 	bool _isbad{ false };
 
+	QString lastSaveImgRoot{};
+
 private:
 	QQueue<MatInfo>& _queue;
 	QMutex& _mutex;
