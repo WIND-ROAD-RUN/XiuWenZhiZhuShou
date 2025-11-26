@@ -44,6 +44,7 @@ private:
 	void save_image(rw::rqw::ImageInfo& imageInfo, const QImage& image);
 	void save_image_work(rw::rqw::ImageInfo& imageInfo, const QImage& image);
 
+	void drawCenterPointAndAngle(QImage& maskImg, double angle, int centerX, int centerY);
 signals:
 	void imageNGReady(QPixmap image, size_t index, bool isbad);
 

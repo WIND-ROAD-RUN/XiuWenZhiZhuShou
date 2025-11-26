@@ -133,8 +133,22 @@ void ImageProcessorHandleScanner::run_debug(MatInfo& frame)
 		for (size_t i = 0; i < proResult.size(); ++i) {
 			auto body = proResult[i];
 			auto& xiangsudangliang = mainWindowConfig.xiangsudangliang;
+			auto drawCenter_X = body.center_x;
+			auto drawCenter_Y = body.center_y;
 			body.center_x = body.center_x * xiangsudangliang;
 			body.center_y = body.center_y * xiangsudangliang;
+			body.angle = body.angle * 180 / CV_PI;
+
+			// 判断箭头是否指向长边，如果是则旋转90度使其指向短边
+			if (body.height > body.width) {
+				// 高度大于宽度，说明长边是垂直方向
+				// 箭头应该指向水平方向（短边），需要旋转90度
+				body.angle += 90.0;
+				// 确保角度在 [0, 360) 范围内
+				if (body.angle >= 360.0) {
+					body.angle -= 360.0;
+				}
+			}
 
 			auto area = body.area * xiangsudangliang * xiangsudangliang;
 
@@ -142,6 +156,8 @@ void ImageProcessorHandleScanner::run_debug(MatInfo& frame)
 			{
 				break;
 			}
+
+			drawCenterPointAndAngle(maskImg, body.angle, drawCenter_X, drawCenter_Y);
 
 			if (!hasValidData)
 			{
@@ -151,7 +167,7 @@ void ImageProcessorHandleScanner::run_debug(MatInfo& frame)
 
 			payload += QString("[X:%1;").arg(body.center_x);
 			payload += QString("Y:%1;").arg(body.center_y);
-			payload += QString("A:%1;").arg(body.angle * 360);
+			payload += QString("A:%1;").arg(body.angle);
 			payload += QString("ATTR:0;");
 			payload += QString("ID:0]\n");
 		}
@@ -230,8 +246,22 @@ void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
 		for (size_t i = 0; i < proResult.size(); ++i) {
 			auto body = proResult[i];
 			auto& xiangsudangliang = mainWindowConfig.xiangsudangliang;
+			auto drawCenter_X = body.center_x;
+			auto drawCenter_Y = body.center_y;
 			body.center_x = body.center_x * xiangsudangliang;
 			body.center_y = body.center_y * xiangsudangliang;
+			body.angle = body.angle * 180 / CV_PI;
+
+			// 判断箭头是否指向长边，如果是则旋转90度使其指向短边
+			if (body.height > body.width) {
+				// 高度大于宽度，说明长边是垂直方向
+				// 箭头应该指向水平方向（短边），需要旋转90度
+				body.angle += 90.0;
+				// 确保角度在 [0, 360) 范围内
+				if (body.angle >= 360.0) {
+					body.angle -= 360.0;
+				}
+			}
 
 			auto area = body.area * xiangsudangliang * xiangsudangliang;
 
@@ -239,6 +269,8 @@ void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
 			{
 				break;
 			}
+
+			drawCenterPointAndAngle(maskImg, body.angle, drawCenter_X, drawCenter_Y);
 
 			if (!hasValidData)
 			{
@@ -288,6 +320,84 @@ void ImageProcessorHandleScanner::save_image_work(rw::rqw::ImageInfo& imageInfo,
 	rw::rqw::ImageInfo Ok(image);
 	Ok.classify = "OK";
 	imageSaveEngine->pushImage(Ok);
+}
+
+void ImageProcessorHandleScanner::drawCenterPointAndAngle(QImage& maskImg, double angle, int centerX, int centerY)
+{
+	// 确保QImage格式正确
+	if (maskImg.format() != QImage::Format_RGB888 &&
+		maskImg.format() != QImage::Format_RGBA8888 &&
+		maskImg.format() != QImage::Format_RGB32 &&
+		maskImg.format() != QImage::Format_ARGB32)
+	{
+		maskImg = maskImg.convertToFormat(QImage::Format_RGB888);
+	}
+
+	// 根据QImage格式创建对应的cv::Mat
+	cv::Mat mat;
+	if (maskImg.format() == QImage::Format_RGB888)
+	{
+		mat = cv::Mat(maskImg.height(), maskImg.width(), CV_8UC3,
+			maskImg.bits(), maskImg.bytesPerLine());
+	}
+	else if (maskImg.format() == QImage::Format_RGBA8888 ||
+		maskImg.format() == QImage::Format_ARGB32)
+	{
+		mat = cv::Mat(maskImg.height(), maskImg.width(), CV_8UC4,
+			maskImg.bits(), maskImg.bytesPerLine());
+	}
+	else if (maskImg.format() == QImage::Format_RGB32)
+	{
+		mat = cv::Mat(maskImg.height(), maskImg.width(), CV_8UC4,
+			maskImg.bits(), maskImg.bytesPerLine());
+	}
+
+	// 转换为BGR格式（OpenCV标准格式）
+	cv::Mat matBGR;
+	if (mat.channels() == 4)
+	{
+		cv::cvtColor(mat, matBGR, cv::COLOR_RGBA2BGR);
+	}
+	else if (mat.channels() == 3)
+	{
+		cv::cvtColor(mat, matBGR, cv::COLOR_RGB2BGR);
+	}
+	else
+	{
+		matBGR = mat.clone();
+	}
+
+	// 绘制中心点 (使用红色圆圈)
+	cv::circle(matBGR, cv::Point(centerX, centerY), 5, cv::Scalar(0, 0, 255), -1);
+	cv::circle(matBGR, cv::Point(centerX, centerY), 8, cv::Scalar(0, 0, 255), 2);
+
+	// 转换角度：垂直向上为0°，顺时针旋转为正
+	// 1. 标准坐标系：0°向右，逆时针为正
+	// 2. 您的需求：0°向上，顺时针为正
+	// 转换公式：标准角度 = 90° - 您的角度
+	double angleInRadians = (90.0 - angle) * CV_PI / 180.0;
+
+	int lineLength = 100;
+
+	// 在图像坐标系中绘制（Y轴向下）
+	int endX = centerX + static_cast<int>(lineLength * std::cos(angleInRadians));
+	int endY = centerY - static_cast<int>(lineLength * std::sin(angleInRadians));
+
+	// 绘制角度指示线 (使用绿色)
+	cv::arrowedLine(matBGR, cv::Point(centerX, centerY), cv::Point(endX, endY),
+		cv::Scalar(0, 255, 0), 2, cv::LINE_AA, 0, 0.3);
+
+	// 在中心点附近显示角度文本
+	QString angleText = QString::number(angle, 'f', 1) + "°";
+	cv::putText(matBGR, angleText.toStdString(),
+		cv::Point(centerX + 10, centerY - 10),
+		cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(255, 255, 0), 2);
+
+	// 转换回QImage
+	cv::Mat matRGB;
+	cv::cvtColor(matBGR, matRGB, cv::COLOR_BGR2RGB);
+	maskImg = QImage(matRGB.data, matRGB.cols, matRGB.rows,
+		matRGB.step, QImage::Format_RGB888).copy();
 }
 
 void ImageProcessorHandleScanner::buildDetModelEngine(const QString& enginePath)
