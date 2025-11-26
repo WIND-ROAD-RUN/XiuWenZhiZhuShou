@@ -464,6 +464,11 @@ void ImageProcessingModuleHandleScanner::onFrameCaptured(cv::Mat frame, size_t i
 	//std::string imagePath = R"(C:\Users\zfkj4090\Desktop\xiuwenzhizhushouOBB\train\images\Image_20251024144247939.jpg)"; // 替换为你的图片路径
 	//cv::Mat frame1 = cv::imread(imagePath, cv::IMREAD_COLOR);
 	//frame = frame1.clone();
+
+	if (frame.empty()) {
+		return; // 跳过空帧
+	}
+
 	if (frame.channels() == 4) {
 		cv::cvtColor(frame, frame, cv::COLOR_BGRA2BGR);
 	}
@@ -471,8 +476,20 @@ void ImageProcessingModuleHandleScanner::onFrameCaptured(cv::Mat frame, size_t i
 		frame.convertTo(frame, CV_8UC3);
 	}
 
-	if (frame.empty()) {
-		return; // 跳过空帧
+	// 强制深拷贝并确保内存连续
+	cv::Mat processFrame;
+	if (!frame.isContinuous()) {
+		processFrame = frame.clone();
+	}
+	else {
+		processFrame = frame.clone();
+	}
+
+	// 确保标准的步长
+	if (processFrame.step != processFrame.cols * processFrame.elemSize()) {
+		cv::Mat temp;
+		processFrame.copyTo(temp);
+		processFrame = temp;
 	}
 
 	QMutexLocker locker(&_mutex);
