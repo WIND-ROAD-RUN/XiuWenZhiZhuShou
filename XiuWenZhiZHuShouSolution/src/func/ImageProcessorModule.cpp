@@ -82,41 +82,41 @@ void ImageProcessorHandleScanner::run_debug(MatInfo& frame)
 	auto& imgPro = *_imgProcess;
 
 #pragma region DebugSaveAndReload
-	//// 构建临时调试图片存储路径
-	//QString tempDir = "D:\\zfkjData\\XiuWenZhiZHuShouSolution\\TempDebugImages";
-	//QDir dir(tempDir);
-	//if (!dir.exists())
-	//{
-	//	dir.mkpath(tempDir);  // 创建目录(如果不存在)
-	//}
+	// 构建临时调试图片存储路径
+	QString tempDir = "D:\\zfkjData\\XiuWenZhiZHuShouSolution\\TempDebugImages";
+	QDir dir(tempDir);
+	if (!dir.exists())
+	{
+		dir.mkpath(tempDir);  // 创建目录(如果不存在)
+	}
 
-	//// 使用固定文件名，每次覆盖，避免文件积累
-	//QString tempImagePath = QString("%1\\Debug_Worker_%2.jpg")
-	//	.arg(tempDir)
-	//	.arg(_workIndex);
+	// 使用固定文件名，每次覆盖，避免文件积累
+	QString tempImagePath = QString("%1\\Debug_Worker_%2.jpg")
+		.arg(tempDir)
+		.arg(_workIndex);
 
-	//// 保存原始图片
-	//bool saveSuccess = cv::imwrite(tempImagePath.toStdString(), frame.image);
-	//if (saveSuccess)
-	//{
-	//	//qDebug() << "Debug image saved to:" << tempImagePath;
+	// 保存原始图片
+	bool saveSuccess = cv::imwrite(tempImagePath.toStdString(), frame.image);
+	if (saveSuccess)
+	{
+		//qDebug() << "Debug image saved to:" << tempImagePath;
 
-	//	// 立即读取验证
-	//	cv::Mat reloadedImage = cv::imread(tempImagePath.toStdString(), cv::IMREAD_COLOR);
-	//	if (!reloadedImage.empty())
-	//	{
-	//		//qDebug() << "Successfully reloaded image, size:" << reloadedImage.rows << "x" << reloadedImage.cols;
-	//		frame.image = reloadedImage.clone();
-	//	}
-	//	else
-	//	{
-	//		//qWarning() << "Failed to reload image from:" << tempImagePath;
-	//	}
-	//}
-	//else
-	//{
-	//	//qWarning() << "Failed to save debug image to:" << tempImagePath;
-	//}
+		// 立即读取验证
+		cv::Mat reloadedImage = cv::imread(tempImagePath.toStdString(), cv::IMREAD_COLOR);
+		if (!reloadedImage.empty())
+		{
+			//qDebug() << "Successfully reloaded image, size:" << reloadedImage.rows << "x" << reloadedImage.cols;
+			frame.image = reloadedImage.clone();
+		}
+		else
+		{
+			//qWarning() << "Failed to reload image from:" << tempImagePath;
+		}
+	}
+	else
+	{
+		//qWarning() << "Failed to save debug image to:" << tempImagePath;
+	}
 #pragma endregion
 
 	imgPro(frame.image);
@@ -124,54 +124,60 @@ void ImageProcessorHandleScanner::run_debug(MatInfo& frame)
 	auto maskImg = imgPro.getMaskImg(frame.image);
 	auto defectResult = imgPro.getDefectResultInfo();
 	auto proResult = imgPro.getProcessResult();
+	auto indexMap = imgPro.getProcessResultIndexMap();
 
-	if (proResult.size() != 0)
+	if (!proResult.empty())
 	{
 		auto& mainWindowConfig = Modules::getInstance().configManagerModule.mainWindowConfig;
 
 		QString payload;
 		bool hasValidData = false;
 
-		for (size_t i = 0; i < proResult.size(); ++i) {
-			auto body = proResult[i];
-			auto& xiangsudangliang = mainWindowConfig.xiangsudangliang;
-			auto drawCenter_X = body.center_x;
-			auto drawCenter_Y = body.center_y;
-			body.center_x = body.center_x * xiangsudangliang;
-			body.center_y = body.center_y * xiangsudangliang;
-			body.angle = body.angle * 180 / CV_PI;
+		auto itBody = indexMap.find(ClassId::body);
+		if (itBody != indexMap.end() && !itBody->second.empty())
+		{
+			const auto& bodyIndexSet = itBody->second;
 
-			// 判断箭头是否指向长边，如果是则旋转90度使其指向短边
-			if (body.height > body.width) {
-				// 高度大于宽度，说明长边是垂直方向
-				// 箭头应该指向水平方向（短边），需要旋转90度
-				body.angle += 90.0;
-				// 确保角度在 [0, 360) 范围内
-				if (body.angle >= 360.0) {
-					body.angle -= 360.0;
+			for (const auto idx : bodyIndexSet)
+			{
+				if (idx >= proResult.size()) continue;
+
+				auto body = proResult[idx];
+				auto& xiangsudangliang = mainWindowConfig.xiangsudangliang;
+				int drawCenter_X = body.center_x;
+				int drawCenter_Y = body.center_y;
+
+				// 坐标放缩并把角度从弧度转为度
+				body.center_x = static_cast<int>(body.center_x * xiangsudangliang);
+				body.center_y = static_cast<int>(body.center_y * xiangsudangliang);
+				body.angle = body.angle * 180.0 / CV_PI;
+
+				// 如果箭头指向长边则旋转90度使其指向短边
+				if (body.height > body.width) {
+					body.angle += 90.0;
+					if (body.angle >= 360.0) body.angle -= 360.0;
 				}
+
+				auto area = body.area * xiangsudangliang * xiangsudangliang;
+
+				if (area < mainWindowConfig.xiandingtiji * 100) {
+					continue;
+				}
+
+				drawCenterPointAndAngle(maskImg, body.angle, drawCenter_X, drawCenter_Y);
+
+				if (!hasValidData)
+				{
+					payload += QString("Image\n");
+					hasValidData = true;
+				}
+
+				payload += QString("[X:%1;").arg(body.center_x);
+				payload += QString("Y:%1;").arg(body.center_y);
+				payload += QString("A:%1;").arg(body.angle);
+				payload += QString("ATTR:0;");
+				payload += QString("ID:0]\n");
 			}
-
-			auto area = body.area * xiangsudangliang * xiangsudangliang;
-
-			if (area < mainWindowConfig.xiandingtiji * 100)
-			{
-				break;
-			}
-
-			drawCenterPointAndAngle(maskImg, body.angle, drawCenter_X, drawCenter_Y);
-
-			if (!hasValidData)
-			{
-				payload += QString("Image\n");
-				hasValidData = true;
-			}
-
-			payload += QString("[X:%1;").arg(body.center_x);
-			payload += QString("Y:%1;").arg(body.center_y);
-			payload += QString("A:%1;").arg(body.angle);
-			payload += QString("ATTR:0;");
-			payload += QString("ID:0]\n");
 		}
 
 		if (hasValidData)
@@ -187,9 +193,9 @@ void ImageProcessorHandleScanner::run_debug(MatInfo& frame)
 	}
 	emit imageNGReady(QPixmap::fromImage(maskImg), frame.index, defectResult.isBad);
 
-	/*rw::rqw::ImageInfo imageInfo(rw::rqw::cvMatToQImage(frame.image));
+	rw::rqw::ImageInfo imageInfo(rw::rqw::cvMatToQImage(frame.image));
 
-	save_image(imageInfo, rw::rqw::cvMatToQImage(frame.image));*/
+	save_image(imageInfo, rw::rqw::cvMatToQImage(frame.image));
 }
 
 void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
@@ -197,41 +203,41 @@ void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
 	auto& imgPro = *_imgProcess;
 
 #pragma region DebugSaveAndReload
-	//// 构建临时调试图片存储路径
-	//QString tempDir = "D:\\zfkjData\\XiuWenZhiZHuShouSolution\\TempDebugImages";
-	//QDir dir(tempDir);
-	//if (!dir.exists())
-	//{
-	//	dir.mkpath(tempDir);  // 创建目录(如果不存在)
-	//}
+	// 构建临时调试图片存储路径
+	QString tempDir = "D:\\zfkjData\\XiuWenZhiZHuShouSolution\\TempDebugImages";
+	QDir dir(tempDir);
+	if (!dir.exists())
+	{
+		dir.mkpath(tempDir);  // 创建目录(如果不存在)
+	}
 
-	//// 使用固定文件名，每次覆盖，避免文件积累
-	//QString tempImagePath = QString("%1\\Debug_Worker_%2.jpg")
-	//	.arg(tempDir)
-	//	.arg(_workIndex);
+	// 使用固定文件名，每次覆盖，避免文件积累
+	QString tempImagePath = QString("%1\\Debug_Worker_%2.jpg")
+		.arg(tempDir)
+		.arg(_workIndex);
 
-	//// 保存原始图片
-	//bool saveSuccess = cv::imwrite(tempImagePath.toStdString(), frame.image);
-	//if (saveSuccess)
-	//{
-	//	//qDebug() << "Debug image saved to:" << tempImagePath;
+	// 保存原始图片
+	bool saveSuccess = cv::imwrite(tempImagePath.toStdString(), frame.image);
+	if (saveSuccess)
+	{
+		//qDebug() << "Debug image saved to:" << tempImagePath;
 
-	//	// 立即读取验证
-	//	cv::Mat reloadedImage = cv::imread(tempImagePath.toStdString(), cv::IMREAD_COLOR);
-	//	if (!reloadedImage.empty())
-	//	{
-	//		//qDebug() << "Successfully reloaded image, size:" << reloadedImage.rows << "x" << reloadedImage.cols;
-	//		frame.image = reloadedImage.clone();
-	//	}
-	//	else
-	//	{
-	//		//qWarning() << "Failed to reload image from:" << tempImagePath;
-	//	}
-	//}
-	//else
-	//{
-	//	//qWarning() << "Failed to save debug image to:" << tempImagePath;
-	//}
+		// 立即读取验证
+		cv::Mat reloadedImage = cv::imread(tempImagePath.toStdString(), cv::IMREAD_COLOR);
+		if (!reloadedImage.empty())
+		{
+			//qDebug() << "Successfully reloaded image, size:" << reloadedImage.rows << "x" << reloadedImage.cols;
+			frame.image = reloadedImage.clone();
+		}
+		else
+		{
+			//qWarning() << "Failed to reload image from:" << tempImagePath;
+		}
+	}
+	else
+	{
+		//qWarning() << "Failed to save debug image to:" << tempImagePath;
+	}
 #pragma endregion
 
 	imgPro(frame.image);
@@ -239,54 +245,60 @@ void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
 	auto maskImg = imgPro.getMaskImg(frame.image);
 	auto defectResult = imgPro.getDefectResultInfo();
 	auto proResult = imgPro.getProcessResult();
+	auto indexMap = imgPro.getProcessResultIndexMap();
 
-	if (proResult.size() != 0)
+	if (!proResult.empty())
 	{
 		auto& mainWindowConfig = Modules::getInstance().configManagerModule.mainWindowConfig;
 
 		QString payload;
 		bool hasValidData = false;
 
-		for (size_t i = 0; i < proResult.size(); ++i) {
-			auto body = proResult[i];
-			auto& xiangsudangliang = mainWindowConfig.xiangsudangliang;
-			auto drawCenter_X = body.center_x;
-			auto drawCenter_Y = body.center_y;
-			body.center_x = body.center_x * xiangsudangliang;
-			body.center_y = body.center_y * xiangsudangliang;
-			body.angle = body.angle * 180 / CV_PI;
+		auto itBody = indexMap.find(ClassId::body);
+		if (itBody != indexMap.end() && !itBody->second.empty())
+		{
+			const auto& bodyIndexSet = itBody->second;
 
-			// 判断箭头是否指向长边，如果是则旋转90度使其指向短边
-			if (body.height > body.width) {
-				// 高度大于宽度，说明长边是垂直方向
-				// 箭头应该指向水平方向（短边），需要旋转90度
-				body.angle += 90.0;
-				// 确保角度在 [0, 360) 范围内
-				if (body.angle >= 360.0) {
-					body.angle -= 360.0;
+			for (const auto idx : bodyIndexSet)
+			{
+				if (idx >= proResult.size()) continue;
+
+				auto body = proResult[idx];
+				auto& xiangsudangliang = mainWindowConfig.xiangsudangliang;
+				int drawCenter_X = body.center_x;
+				int drawCenter_Y = body.center_y;
+
+				// 坐标放缩并把角度从弧度转为度
+				body.center_x = static_cast<int>(body.center_x * xiangsudangliang);
+				body.center_y = static_cast<int>(body.center_y * xiangsudangliang);
+				body.angle = body.angle * 180.0 / CV_PI * -1;
+
+				// 如果箭头指向长边则旋转90度使其指向短边
+				if (body.height > body.width) {
+					body.angle += 90.0;
+					if (body.angle >= 360.0) body.angle -= 360.0;
 				}
+
+				auto area = body.area * xiangsudangliang * xiangsudangliang;
+
+				if (area < mainWindowConfig.xiandingtiji * 100) {
+					continue;
+				}
+
+				drawCenterPointAndAngle(maskImg, body.angle, drawCenter_X, drawCenter_Y);
+
+				if (!hasValidData)
+				{
+					payload += QString("Image\n");
+					hasValidData = true;
+				}
+
+				payload += QString("[X:%1;").arg(body.center_x);
+				payload += QString("Y:%1;").arg(body.center_y);
+				payload += QString("A:%1;").arg(body.angle);
+				payload += QString("ATTR:0;");
+				payload += QString("ID:0]\n");
 			}
-
-			auto area = body.area * xiangsudangliang * xiangsudangliang;
-
-			if (area < mainWindowConfig.xiandingtiji * 100)
-			{
-				break;
-			}
-
-			drawCenterPointAndAngle(maskImg, body.angle, drawCenter_X, drawCenter_Y);
-
-			if (!hasValidData)
-			{
-				payload += QString("Image\n");
-				hasValidData = true;
-			}
-
-			payload += QString("[X:%1;").arg(body.center_x);
-			payload += QString("Y:%1;").arg(body.center_y);
-			payload += QString("A:%1;").arg(body.angle * 360);
-			payload += QString("ATTR:0;");
-			payload += QString("ID:0]\n");
 		}
 
 		if (hasValidData)
@@ -303,9 +315,9 @@ void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
 
 	emit imageNGReady(QPixmap::fromImage(maskImg), frame.index, defectResult.isBad);
 
-	/*rw::rqw::ImageInfo imageInfo(maskImg);
+	rw::rqw::ImageInfo imageInfo(maskImg);
 
-	save_image(imageInfo, rw::rqw::cvMatToQImage(frame.image));*/
+	save_image(imageInfo, rw::rqw::cvMatToQImage(frame.image));
 }
 
 void ImageProcessorHandleScanner::save_image(rw::rqw::ImageInfo& imageInfo, const QImage& image)
@@ -482,8 +494,8 @@ void ImageProcessingModuleHandleScanner::onFrameCaptured(cv::Mat frame, size_t i
 
 	// 强制深拷贝并确保内存连续
 	cv::Mat processFrame;
-	if (!frame.isContinuous()) {
-		processFrame = frame.clone();
+	if (!frame.isContinuous() || frame.step != frame.cols * frame.elemSize()) {
+		frame.copyTo(processFrame); // 保证标准步长与连续内存
 	}
 	else {
 		processFrame = frame.clone();
@@ -498,7 +510,7 @@ void ImageProcessingModuleHandleScanner::onFrameCaptured(cv::Mat frame, size_t i
 
 	QMutexLocker locker(&_mutex);
 	MatInfo mat;
-	mat.image = frame;
+	mat.image = processFrame;
 	mat.index = index;
 	_queue.enqueue(mat);
 	_condition.wakeOne();
