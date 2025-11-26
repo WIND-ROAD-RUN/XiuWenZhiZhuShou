@@ -9,5 +9,7 @@ namespace cdm {
 		isSaveImg : bool :default = false;
 		xiangsudangliang : double :default = 0.0;
 		xiandingtiji : double :default = 0.0;
+		zuoxianwei : double :default = 0.0;
+		youxianwei : double :default = 0.0;
 	};
 }

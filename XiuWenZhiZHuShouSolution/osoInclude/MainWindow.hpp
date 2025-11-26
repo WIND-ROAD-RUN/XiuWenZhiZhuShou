@@ -24,6 +24,8 @@ namespace cdm {
         bool isSaveImg{ false };
         double xiangsudangliang{ 0.0 };
         double xiandingtiji{ 0.0 };
+        double zuoxianwei{ 0.0 };
+        double youxianwei{ 0.0 };
     };
 
     inline MainWindowConfig::MainWindowConfig(const rw::oso::ObjectStoreAssembly& assembly)
@@ -58,6 +60,16 @@ namespace cdm {
             throw std::runtime_error("$variable$xiandingtiji is not found");
         }
         xiandingtiji = xiandingtijiItem->getValueAsDouble();
+        auto zuoxianweiItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$zuoxianwei$"));
+        if (!zuoxianweiItem) {
+            throw std::runtime_error("$variable$zuoxianwei is not found");
+        }
+        zuoxianwei = zuoxianweiItem->getValueAsDouble();
+        auto youxianweiItem = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$youxianwei$"));
+        if (!youxianweiItem) {
+            throw std::runtime_error("$variable$youxianwei is not found");
+        }
+        youxianwei = youxianweiItem->getValueAsDouble();
     }
 
     inline MainWindowConfig::MainWindowConfig(const MainWindowConfig& obj)
@@ -67,6 +79,8 @@ namespace cdm {
         isSaveImg = obj.isSaveImg;
         xiangsudangliang = obj.xiangsudangliang;
         xiandingtiji = obj.xiandingtiji;
+        zuoxianwei = obj.zuoxianwei;
+        youxianwei = obj.youxianwei;
     }
 
     inline MainWindowConfig& MainWindowConfig::operator=(const MainWindowConfig& obj)
@@ -77,6 +91,8 @@ namespace cdm {
             isSaveImg = obj.isSaveImg;
             xiangsudangliang = obj.xiangsudangliang;
             xiandingtiji = obj.xiandingtiji;
+            zuoxianwei = obj.zuoxianwei;
+            youxianwei = obj.youxianwei;
         }
         return *this;
     }
@@ -105,12 +121,20 @@ namespace cdm {
         xiandingtijiItem->setName("$variable$xiandingtiji$");
         xiandingtijiItem->setValueFromDouble(xiandingtiji);
         assembly.addItem(xiandingtijiItem);
+        auto zuoxianweiItem = std::make_shared<rw::oso::ObjectStoreItem>();
+        zuoxianweiItem->setName("$variable$zuoxianwei$");
+        zuoxianweiItem->setValueFromDouble(zuoxianwei);
+        assembly.addItem(zuoxianweiItem);
+        auto youxianweiItem = std::make_shared<rw::oso::ObjectStoreItem>();
+        youxianweiItem->setName("$variable$youxianwei$");
+        youxianweiItem->setValueFromDouble(youxianwei);
+        assembly.addItem(youxianweiItem);
         return assembly;
     }
 
     inline bool MainWindowConfig::operator==(const MainWindowConfig& obj) const
     {
-        return isDebug == obj.isDebug && isDefect == obj.isDefect && isSaveImg == obj.isSaveImg && xiangsudangliang == obj.xiangsudangliang && xiandingtiji == obj.xiandingtiji;
+        return isDebug == obj.isDebug && isDefect == obj.isDefect && isSaveImg == obj.isSaveImg && xiangsudangliang == obj.xiangsudangliang && xiandingtiji == obj.xiandingtiji && zuoxianwei == obj.zuoxianwei && youxianwei == obj.youxianwei;
     }
 
     inline bool MainWindowConfig::operator!=(const MainWindowConfig& obj) const

@@ -49,8 +49,8 @@ private slots:
 	void rbtn_saveImg_checked(bool checked);
 	void btn_xiangsudangliang_clicked();
 	void btn_xiandingtiji_clicked();
-
-signals:
+	void btn_zuoxianwei_clicked();
+	void btn_youxianwei_clicked();
 private:
 	Ui::XiuWenZhiZHuShouClass* ui;
 	int minimizeCount{ 3 };

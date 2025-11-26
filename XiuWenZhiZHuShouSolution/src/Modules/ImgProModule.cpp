@@ -73,6 +73,21 @@ void ImgProModule::buildImgProContextMain()
 				}
 			}
 
+			// update limite
+			{
+				int limitLeft{ 0 };
+				int limitRight{ 0 };
+
+				if (1 == ImgProcessIndex)
+				{
+					limitLeft = static_cast<int>(mainWindowConfig.zuoxianwei);
+					limitRight = static_cast<int>(mainWindowConfig.youxianwei);
+				}
+
+				context.customFields["LimitLeft"] = static_cast<int>(limitLeft);
+				context.customFields["LimitRight"] = static_cast<int>(limitRight);
+			}
+
 			// update drawConfig
 			{
 				if (RunningState::Debug == runningState)
@@ -97,6 +112,34 @@ void ImgProModule::buildImgProContextMain()
 		};
 #pragma endregion
 
+#pragma region build index get
+	imageProcessContext_Main.indexGetContext.removeIndicesIfByInfo = [this](const rw::DetectionRectangleInfo& info
+		, rw::imgPro::ImageProcessContext& context)
+		{
+			bool isInShieldWires = false;
+			int limitLeft{ -1 };
+			int limitRight{ -1 };
+
+			if (context.customFields.find("LimitLeft") != context.customFields.end()) {
+				limitLeft = std::any_cast<int>(context.customFields["LimitLeft"]);
+			}
+			if (context.customFields.find("LimitRight") != context.customFields.end()) {
+				limitRight = std::any_cast<int>(context.customFields["LimitRight"]);
+			}
+
+			if (-1 == limitLeft || -1 == limitRight)
+			{
+				return false;
+			}
+			// 判断缺陷框中心点是否在屏蔽线区域内
+			if (info.center_x < limitRight && info.center_x > limitLeft)
+			{
+				isInShieldWires = true;
+			}
+
+			return !isInShieldWires;
+		};
+#pragma endregion
 
 #pragma region build defect draw
 	imageProcessContext_Main.defectDrawCfg.classIdNameMap = ClassId::classIdNameMap;
@@ -114,6 +157,30 @@ void ImgProModule::buildImgProContextMain()
 	imageProcessContext_Main.defectDrawCfg.classIdWithConfigMap[ClassId::body].isDisAreaText = false;
 	imageProcessContext_Main.defectDrawCfg.classIdWithConfigMap[ClassId::body].isDisScoreText = false;
 	imageProcessContext_Main.defectDrawCfg.classIdWithConfigMap[ClassId::body].isDisName = false;
+
+	imageProcessContext_Main.defectDrawFuncContext.postOperateFunc = [](
+		QImage& img,
+		rw::imgPro::ImageProcessContext& context) {
+
+			int limitLeft{ 0 };
+			int limitRight{ 0 };
+
+			if (context.customFields.find("LimitLeft") != context.customFields.end()) {
+				limitLeft = std::any_cast<int>(context.customFields["LimitLeft"]);
+			}
+			if (context.customFields.find("LimitRight") != context.customFields.end()) {
+				limitRight = std::any_cast<int>(context.customFields["LimitRight"]);
+			}
+
+			rw::imgPro::ConfigDrawLine configDrawLine;
+			configDrawLine.color = rw::imgPro::Color::Orange;
+			configDrawLine.thickness = 10;
+
+			configDrawLine.position = limitLeft;
+			rw::imgPro::ImagePainter::drawVerticalLine(img, configDrawLine);
+			configDrawLine.position = limitRight;
+			rw::imgPro::ImagePainter::drawVerticalLine(img, configDrawLine);
+		};
 
 #pragma endregion
 

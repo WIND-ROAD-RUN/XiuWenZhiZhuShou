@@ -67,7 +67,9 @@ void HandleScanner::build_connect()
 	connect(ui->rbtn_saveImg, &QRadioButton::toggled, this, &HandleScanner::rbtn_saveImg_checked);
 	connect(ui->btn_xiangsudangliang, &QPushButton::clicked, this, &HandleScanner::btn_xiangsudangliang_clicked);
 	connect(ui->btn_xiandingtiji, &QPushButton::clicked, this, &HandleScanner::btn_xiandingtiji_clicked);
-	
+	connect(ui->btn_zuoxianwei, &QPushButton::clicked, this, &HandleScanner::btn_zuoxianwei_clicked);
+	connect(ui->btn_youxianwei, &QPushButton::clicked, this, &HandleScanner::btn_youxianwei_clicked);
+
 	// 连接显示标题
 	QObject::connect(clickableTitle, &rw::rqw::ClickableLabel::clicked,
 		this, &HandleScanner::lb_title_clicked);
@@ -85,6 +87,8 @@ void HandleScanner::build_HandleScannerData()
 	ui->rbtn_saveImg->setChecked(mainWindowConfig.isSaveImg);
 	ui->btn_xiangsudangliang->setText(QString::number(mainWindowConfig.xiangsudangliang));
 	ui->btn_xiandingtiji->setText(QString::number(mainWindowConfig.xiandingtiji));
+	ui->btn_zuoxianwei->setText(QString::number(mainWindowConfig.zuoxianwei));
+	ui->btn_youxianwei->setText(QString::number(mainWindowConfig.youxianwei));
 
 	// 初始化关闭窗体
 	_dlgCloseForm = new DlgCloseForm(this);
@@ -343,5 +347,43 @@ void HandleScanner::btn_xiandingtiji_clicked()
 		auto& generalConfig = Modules::getInstance().configManagerModule.mainWindowConfig;
 		ui->btn_xiandingtiji->setText(value);
 		generalConfig.xiandingtiji = value.toDouble();
+	}
+}
+
+void HandleScanner::btn_zuoxianwei_clicked()
+{
+	NumberKeyboard numKeyBord;
+	numKeyBord.setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
+	auto isAccept = numKeyBord.exec();
+	if (isAccept == QDialog::Accepted)
+	{
+		auto value = numKeyBord.getValue();
+		if (value.toDouble() < 0)
+		{
+			QMessageBox::warning(this, "提示", "请输入大于0的数值");
+			return;
+		}
+		auto& generalConfig = Modules::getInstance().configManagerModule.mainWindowConfig;
+		ui->btn_zuoxianwei->setText(value);
+		generalConfig.zuoxianwei = value.toDouble();
+	}
+}
+
+void HandleScanner::btn_youxianwei_clicked()
+{
+	NumberKeyboard numKeyBord;
+	numKeyBord.setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
+	auto isAccept = numKeyBord.exec();
+	if (isAccept == QDialog::Accepted)
+	{
+		auto value = numKeyBord.getValue();
+		if (value.toDouble() < 0)
+		{
+			QMessageBox::warning(this, "提示", "请输入大于0的数值");
+			return;
+		}
+		auto& generalConfig = Modules::getInstance().configManagerModule.mainWindowConfig;
+		ui->btn_youxianwei->setText(value);
+		generalConfig.youxianwei = value.toDouble();
 	}
 }
