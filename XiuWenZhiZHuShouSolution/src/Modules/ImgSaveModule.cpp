@@ -44,11 +44,11 @@ void ImgSaveModule::build()
 			sortedFolders.append(pair.second);
 		}
 
-		// 删除超过7天的文件夹
+		// 删除超过3天的文件夹
 		QDate currentDate = QDate::currentDate();
 		for (const QString& folderName : sortedFolders) {
 			QDate folderDate = QDate::fromString(folderName, "yyyy_MM_dd");
-			if (folderDate.isValid() && folderDate < currentDate.addDays(-7)) {
+			if (folderDate.isValid() && folderDate < currentDate.addDays(-3)) {
 				QString folderPath = imageSavePath + folderName;
 				QDir(folderPath).removeRecursively();
 			}
