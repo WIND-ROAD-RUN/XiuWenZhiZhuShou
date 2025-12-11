@@ -16,7 +16,7 @@ private:
 	QVector<QString> imgsPath{};
 	QVector<cv::Mat> imgCache;
 private:
-	size_t _pushImgTime{150};
+	size_t _pushImgTime{500};
 public:
 	void setPushImgTime(size_t pushImgTime);
 public:

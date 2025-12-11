@@ -32,5 +32,5 @@ public:
 	QString companyTxtPath = txtPath + R"(Company.txt)";
 public:
 	QString imageSaveRootPath = projectHome + R"(SavedImages\)";
-	QString testImgDirPath = R"(D:\zfkjDevelopment\ImgStorage\zhizhushou)";
+	QString testImgDirPath = R"(D:\ImgStorage\zhizhushou)";
 }globalPath;
