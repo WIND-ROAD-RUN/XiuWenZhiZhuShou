@@ -203,41 +203,41 @@ void ImageProcessorHandleScanner::run_OpenRemoveFunc(MatInfo& frame)
 	auto& imgPro = *_imgProcess;
 
 #pragma region DebugSaveAndReload
-	// 构建临时调试图片存储路径
-	QString tempDir = "D:\\zfkjData\\XiuWenZhiZHuShouSolution\\TempDebugImages";
-	QDir dir(tempDir);
-	if (!dir.exists())
-	{
-		dir.mkpath(tempDir);  // 创建目录(如果不存在)
-	}
+	//// 构建临时调试图片存储路径
+	//QString tempDir = "D:\\zfkjData\\XiuWenZhiZHuShouSolution\\TempDebugImages";
+	//QDir dir(tempDir);
+	//if (!dir.exists())
+	//{
+	//	dir.mkpath(tempDir);  // 创建目录(如果不存在)
+	//}
 
-	// 使用固定文件名，每次覆盖，避免文件积累
-	QString tempImagePath = QString("%1\\Debug_Worker_%2.jpg")
-		.arg(tempDir)
-		.arg(_workIndex);
+	//// 使用固定文件名，每次覆盖，避免文件积累
+	//QString tempImagePath = QString("%1\\Debug_Worker_%2.jpg")
+	//	.arg(tempDir)
+	//	.arg(_workIndex);
 
-	// 保存原始图片
-	bool saveSuccess = cv::imwrite(tempImagePath.toStdString(), frame.image);
-	if (saveSuccess)
-	{
-		//qDebug() << "Debug image saved to:" << tempImagePath;
+	//// 保存原始图片
+	//bool saveSuccess = cv::imwrite(tempImagePath.toStdString(), frame.image);
+	//if (saveSuccess)
+	//{
+	//	//qDebug() << "Debug image saved to:" << tempImagePath;
 
-		// 立即读取验证
-		cv::Mat reloadedImage = cv::imread(tempImagePath.toStdString(), cv::IMREAD_COLOR);
-		if (!reloadedImage.empty())
-		{
-			//qDebug() << "Successfully reloaded image, size:" << reloadedImage.rows << "x" << reloadedImage.cols;
-			frame.image = reloadedImage.clone();
-		}
-		else
-		{
-			//qWarning() << "Failed to reload image from:" << tempImagePath;
-		}
-	}
-	else
-	{
-		//qWarning() << "Failed to save debug image to:" << tempImagePath;
-	}
+	//	// 立即读取验证
+	//	cv::Mat reloadedImage = cv::imread(tempImagePath.toStdString(), cv::IMREAD_COLOR);
+	//	if (!reloadedImage.empty())
+	//	{
+	//		//qDebug() << "Successfully reloaded image, size:" << reloadedImage.rows << "x" << reloadedImage.cols;
+	//		frame.image = reloadedImage.clone();
+	//	}
+	//	else
+	//	{
+	//		//qWarning() << "Failed to reload image from:" << tempImagePath;
+	//	}
+	//}
+	//else
+	//{
+	//	//qWarning() << "Failed to save debug image to:" << tempImagePath;
+	//}
 #pragma endregion
 
 	imgPro(frame.image);
